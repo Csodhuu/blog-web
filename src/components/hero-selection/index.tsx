@@ -36,12 +36,9 @@ export function HeroSection() {
               className="animate-slide-up"
               style={{ animationDelay: "1.2s" }}
             >
-              <button className=" bg-gradient-to-tr from-primary to-secondary inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg shadow-lg transition-all duration-300 hover:scale-105 group border-0">
-                <span style={{ color: "#ffffff !important" }}>Get Started</span>
-                <span
-                  className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                  style={{ color: "#ffffff !important" }}
-                >
+              <button className=" bg-gradient-to-tr from-primary text-white  to-secondary inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg shadow-lg transition-all duration-300 hover:scale-105 group border-0">
+                <span>Get Started</span>
+                <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
               </button>

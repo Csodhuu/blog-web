@@ -11,12 +11,13 @@
   --card-foreground: #000000;
   --popover: rgba(255, 255, 255, 0.9);
   --popover-foreground: #475569;
-  /* --primary: #059669;
+  --primary: #059669;
+  --secondary: #10b981;
+  /* --primary: #d97706;
+  --secondary: #f59e0b; */
+  /* --primary: #000000;
+  --secondary: #000000; */
   --primary-foreground: #ffffff;
-  --secondary: #10b981; */
-  --primary: #d97706;
-  --primary-foreground: #ffffff;
-  --secondary: #f59e0b;
   --secondary-foreground: #ffffff;
   --muted: #f1f5f9;
   --muted-foreground: #374151;
