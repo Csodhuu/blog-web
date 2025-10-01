@@ -1,31 +1,31 @@
 const upcomingEvents = [
   {
-    title: "Gateway U18 Basketball Invitational",
-    sport: "Basketball",
+    title: "Gateway U18 Сагсан Бөмбөгийн Урилгат Тэмцээн",
+    sport: "Сагсан бөмбөг",
     date: "2024-08-15",
-    location: "Singapore Sports Hub",
+    location: "Singapore Sports Hub, Сингапур",
     description:
-      "Round robin featuring elite academies with analytics support, recovery stations, and cultural immersion days.",
+      "Шилдэг академиудын хүрээнд тойргийн тоглолтууд зохион байгуулж, өгөгдөл-аналитик дэмжлэг, сэргэлтийн станцууд, соёлын хөтөлбөрт хамруулна.",
     image:
       "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "ASEAN Women’s Volleyball Classic",
-    sport: "Volleyball",
+    title: "ASEAN Эмэгтэйчүүдийн Волейболын Классик",
+    sport: "Волейбол",
     date: "2024-09-02",
-    location: "Bangkok Arena, Thailand",
+    location: "Bangkok Arena, Тайланд",
     description:
-      "Eight-team invitational with FIVB-certified officials, televised matches, and tailored sightseeing for delegates.",
+      "FIVB-ийн гэрчилгээтэй шүүгчидтэй, телевизийн шууд дамжуулалттай найман багийн урилгат тэмцээн. Төлөөлөгчдөд зориулсан аяллын тусгай хөтөлбөртэй.",
     image:
       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Gateway Futsal Masters",
-    sport: "Futsal",
+    title: "Gateway Футзал Мастерс",
+    sport: "Футзал",
     date: "2024-10-05",
-    location: "Kuala Lumpur, Malaysia",
+    location: "Куала Лумпур, Малайз",
     description:
-      "Fast-paced indoor futsal tournament with youth and senior divisions plus coaching masterclasses.",
+      "Залуучууд болон насанд хүрэгчдийн ангилалтай, хурдтай өрнөх танхимын тэмцээн. Дасгалжуулагчдын мастер-класс дагалдана.",
     image:
       "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=80",
   },
@@ -33,43 +33,39 @@ const upcomingEvents = [
 
 const pastEvents = [
   {
-    title: "Danang Friendship Cup",
-    sport: "Basketball",
+    title: "Дананг Найрамдлын Цом",
+    sport: "Сагсан бөмбөг",
     date: "2023-10-12",
-    location: "Danang, Vietnam",
+    location: "Дананг, Вьетнам",
     description:
-      "Combined boys and girls competition culminating in leadership workshops and coastal restoration volunteering.",
+      "Хөвгүүд, охидын хамтарсан тэмцээнийг лидершип воркшоп, эргийн экосистемийн сайн дурын үйл ажиллагаатай уялдуулан зохион байгуулсан.",
     image:
       "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Tokyo Skills Festival",
-    sport: "Volleyball",
+    title: "Токио Ур Чадварын Фестиваль",
+    sport: "Волейбол",
     date: "2023-07-28",
-    location: "Tokyo, Japan",
+    location: "Токио, Япон",
     description:
-      "Three-day showcase with Japanese university squads, culminating in a bilingual awards gala.",
+      "Японы их сургуулийн багуудтай гурван өдрийн үзүүлэх тоглолт, хоёр хэл дээрх шагнал гардуулах ёслолоор өндөрлөсөн.",
     image:
       "https://images.unsplash.com/photo-1517341723685-0189ff20c950?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Bali Unity Games",
-    sport: "Multi-sport",
+    title: "Бали Нэгдлийн Тоглолтууд",
+    sport: "Олон төрөлт",
     date: "2022-11-18",
-    location: "Bali, Indonesia",
+    location: "Бали, Индонез",
     description:
-      "Basketball, volleyball, and futsal events paired with cultural crafts, community visits, and alumni networking.",
+      "Сагсан бөмбөг, волейбол, футзалын арга хэмжээг гар урлал, олон нийттэй уулзалт, төгсөгчдийн уулзалтуудтай хослуулсан.",
     image:
       "https://images.unsplash.com/photo-1529429617124-aee3712c8f31?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
 function formatDisplayDate(date: string) {
-  return new Intl.DateTimeFormat("en", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
+  return new Date(date).toLocaleDateString("en-CA");
 }
 
 function EventCard({
@@ -89,7 +85,7 @@ function EventCard({
       <div
         className="h-44 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${event.image})` }}
-        aria-label={`${event.title} photo`}
+        aria-label={`${event.title} зургийн төсөө`}
       />
       <div className="flex flex-1 flex-col gap-3 p-6">
         <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-primary/80">
@@ -99,7 +95,9 @@ function EventCard({
         <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
         <p className="text-sm font-medium text-slate-500">{event.location}</p>
         <p className="text-sm text-slate-600">{event.description}</p>
-        <div className="mt-auto pt-4 text-sm font-semibold text-primary">Request full brief</div>
+        <div className="mt-auto pt-4 text-sm font-semibold text-primary">
+          Хүсэлт илгээх
+        </div>
       </div>
     </div>
   );
@@ -107,32 +105,39 @@ function EventCard({
 
 export default function CompetitionsPage() {
   const sortedUpcoming = [...upcomingEvents].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
+      {/* --- Толгой хэсэг --- */}
       <section className="border-b border-slate-200 bg-white/80">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Competitions
+            Тэмцээнүүд
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Upcoming and legacy events designed for growth
+            Хөгжилд чиглэсэн ирэх болон өмнөх арга хэмжээнүүд
           </h1>
           <p className="mt-4 max-w-3xl text-sm text-slate-600">
-            We curate invitational tournaments and showcase fixtures that match your team’s development stage. All upcoming events are listed in order of the nearest departure so you can secure slots early.
+            Бид танай багийн хөгжлийн үе шатанд тохирсон урилгат тэмцээн, шоу
+            тоглолтуудыг шүүн бүрдүүлдэг. Ирэх арга хэмжээнүүдийг ойрын гарах
+            огноогоор нь эрэмбэлсэн тул урьдчилан оролцох эрхээ баталгаажуулахад
+            хялбар.
           </p>
         </div>
       </section>
 
+      {/* --- Ирэх тэмцээнүүд --- */}
       <section className="border-b border-slate-200 bg-white/90">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Upcoming Events
+              Ирэх тэмцээнүүд
             </p>
-            <h2 className="text-2xl font-semibold text-slate-900">Secure your next competition</h2>
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Дараагийн тэмцээндээ эрхээ баталгаажуулаарай
+            </h2>
           </div>
           <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {sortedUpcoming.map((event) => (
@@ -142,15 +147,19 @@ export default function CompetitionsPage() {
         </div>
       </section>
 
+      {/* --- Өмнөх тэмцээнүүд --- */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Past Events
+              Өмнөх тэмцээнүүд
             </p>
-            <h2 className="text-2xl font-semibold text-slate-900">Highlights from previous tours</h2>
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Өмнөх аяллуудын онцлох агшин
+            </h2>
             <p className="max-w-3xl text-sm text-slate-600">
-              Our past events feature post-tour reports, film sessions, and curated photo albums to keep your athletes motivated and engaged.
+              Өмнөх арга хэмжээнүүдийн тайлан, бичлэгийн дүгнэлт, тусгай фото
+              цомгууд нь тамирчдыг урамшуулж, оролцоог нь хадгалдаг.
             </p>
           </div>
           <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

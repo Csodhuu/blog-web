@@ -1,65 +1,66 @@
 const paragraphs = [
-  "Gateway Sports Travel was established to ensure clubs and national programs across Asia could access international competition without sacrificing athlete welfare. We deliver door-to-door travel management, sport-specific planning, and cultural integration that keep teams focused on performance while we handle the rest.",
-  "From our first invitational tournament in 2011 to today’s multi-country tours, we have stayed committed to building opportunities for young people to grow as competitors and global citizens. Every itinerary is co-created with coaches to balance intense training blocks, academic responsibilities, and restorative experiences.",
-  "Our relationships with federations, embassies, and premium hospitality partners allow us to navigate logistics with precision. Whether your team is chasing continental qualification or taking a developmental leap, Gateway Sports Travel provides the structure and on-site support to make it happen with confidence.",
+  "Gateway Sports Travel нь Азийн клубууд болон үндэсний хөтөлбөрүүдийг олон улсын тэмцээнд оролцох боломжийг олгож, тамирчдын сайн сайхныг хохироохгүйгээр байгуулагдсан. Бид хаалганаас хаалга хүртэл аяллын менежмент, спортын онцлогт тохирсон төлөвлөлт, соёлын уялдаа холбоог бүрдүүлж, багуудыг зөвхөн амжилтад төвлөрөхөд нь тусалдаг.",
+  "2011 онд зохион байгуулсан анхны урилгат тэмцээнээс эхлээд өнөөдрийн олон улсын аяллууд хүртэл бид залуусыг өрсөлдөгч болон дэлхийн иргэн болж хөгжих боломжийг бий болгоход үнэнч хэвээр байна. Бүх аяллын хөтөлбөрийг дасгалжуулагчидтай хамтран боловсруулж, эрчимтэй бэлтгэлийн хуваарь, хичээлийн үүрэг, амралтын туршлагуудыг зөв тэнцвэржүүлдэг.",
+  "Холбоод, элчин сайдын яамд болон тансаг зэрэглэлийн түншүүдтэй байгуулсан харилцааны ачаар бид логистикийг нарийн зохицуулдаг. Танай баг тивийн аваргын эрхийн төлөө тэмцэж байгаа эсвэл хөгжлийн шинэ шат руу үсрэлт хийх гэж байгаа эсэхээс үл хамааран Gateway Sports Travel нь итгэлтэй хэрэгжүүлэх бүтэц, газар дээрх дэмжлэгийг үзүүлнэ.",
 ];
 
 const timeline = [
   {
     year: "2011",
     milestone:
-      "Launched Gateway Sports Travel with our first basketball invitational in Manila, hosting five regional academies.",
+      "Манилад зохион байгуулсан анхны сагсан бөмбөгийн урилгат тэмцээнээр Gateway Sports Travel-ийг эхлүүлж, таван бүсийн академийг хүлээн авсан.",
   },
   {
     year: "2015",
     milestone:
-      "Expanded into multi-sport offerings, introducing volleyball, futsal, and swimming exchanges alongside cultural tours.",
+      "Олон спортын аяллыг өргөжүүлж, соёлын аяллуудын хамт волейбол, футзал, усан сэлэлтийн солилцоог эхлүүлсэн.",
   },
   {
     year: "2018",
     milestone:
-      "Opened visa facilitation and compliance services, streamlining documentation for youth teams across 12 countries.",
+      "Залуучуудын багуудын виз болон бичиг баримтын үйлчилгээг 12 оронд нэвтрүүлж, баримт бичгийн урсгалыг хялбаршуулсан.",
   },
   {
     year: "2021",
     milestone:
-      "Launched the Gateway Performance Network connecting sports scientists, nutritionists, and language specialists to every tour.",
+      "Gateway Performance Network-ийг байгуулж, спортын эрдэмтэн, хоол тэжээлийн мэргэжилтэн, хэлний багш нарыг бүх аялалд холбосон.",
   },
   {
     year: "2024",
     milestone:
-      "Celebrated 600+ athletes managed annually with hybrid travel programs that combine competition, camps, and academic visits.",
+      "Жилд 600+ тамирчныг хосолсон аяллын хөтөлбөрөөр (тэмцээн, бэлтгэл, боловсролын аялал) амжилттай зохион байгуулж тэмдэглэсэн.",
   },
 ];
 
 const capabilities = [
   {
-    title: "Travel Management",
+    title: "Аяллын менежмент",
     description:
-      "Chartered flights, accommodation sourcing, insurance, and on-ground transportation coordinated to match sporting schedules.",
+      "Тэмцээний хуваарьт тохируулан нислэгийн чартераас эхлээд байр, даатгал, газар дээрх тээвэрлэлтийг цогцоор нь зохион байгуулна.",
   },
   {
-    title: "Event Production",
+    title: "Арга хэмжээ зохион байгуулалт",
     description:
-      "From arena booking to technical officiating, we stage tournaments, friendlies, and showcases tailored to your objectives.",
+      "Заал захиалах, техникийн шүүгч, тэмцээн, нөхөрсөг тоглолт, үзүүлбэрүүдийг таны зорилгод тохируулан бүрэн зохион байгуулна.",
   },
   {
-    title: "Visa & Compliance",
+    title: "Виз болон нийцэл",
     description:
-      "Dedicated specialists handle entry requirements, letters of invitation, and guardian coordination for every participant.",
+      "Манай мэргэжилтнүүд оролцогч бүрийн орох нөхцөл, урилгын бичиг, асран хамгаалагчийн зохицуулалтыг хариуцан хөнгөвчилдөг.",
   },
 ];
 
 export default function AboutPage() {
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
+      {/* --- Бидний тухай --- */}
       <section className="border-b border-slate-200 bg-white/80">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            About Us
+            Бидний тухай
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Gateway Sports Travel: elevating teams through global experiences
+            Gateway Sports Travel: Багуудыг дэлхийн туршлагаар хөгжилд хөтөлнө
           </h1>
           <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-6 text-base text-slate-600">
@@ -75,19 +76,20 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* --- Манай аялал --- */}
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Our Journey
+              Манай аялал
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-              Timeline of key moments
+              Гол мөчүүд
             </h2>
             <p className="text-sm text-slate-600">
-              Strategic growth over the past decade has allowed us to broaden
-              disciplines, destinations, and service depth while maintaining
-              boutique attention to detail.
+              Сүүлийн арван жилд бид спортын төрөл, очих газар, үйлчилгээний цар
+              хүрээг өргөжүүлсэн ч анхаарал халамжийн чанарыг байнга хадгалсаар
+              ирсэн.
             </p>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
@@ -108,19 +110,20 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* --- Бид юу хийж чадна --- */}
       <section className="bg-white/90">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              What we can do
+              Бид юу хийж чадна
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-              Comprehensive travel, event, and visa execution
+              Аялал, арга хэмжээ, визийн иж бүрэн шийдэл
             </h2>
             <p className="text-sm text-slate-600">
-              We partner with coaches, athletic directors, and guardians to
-              deliver turnkey solutions that align with competitive calendars
-              and academic priorities.
+              Бид дасгалжуулагчид, спортын удирдлагууд болон асран
+              хамгаалагчидтай хамтран, тэмцээний хуваарь болон хичээлийн
+              үүрэгтэй уялдсан цогц шийдлийг санал болгодог.
             </p>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-3">

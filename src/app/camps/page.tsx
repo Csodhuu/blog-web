@@ -1,41 +1,41 @@
 const camps = [
   {
-    title: "Gateway High Performance Camp",
-    sport: "Basketball",
+    title: "Gateway Өндөр Гүйцэтгэлийн Кэмп",
+    sport: "Сагсан бөмбөг",
     date: "July 4 – 10, 2024",
     location: "Clark, Philippines",
     description:
-      "Strength & conditioning diagnostics, positional skills labs, and leadership sessions with PBA mentors.",
+      "Хүч ба биеийн бэлтгэлийн оношилгоо, байрлалын ур чадварын лаборатори, PBA менторуудтай манлайллын сессүүд.",
     image:
       "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Serve & Soar Volleyball Clinic",
-    sport: "Volleyball",
+    title: "Serve & Soar Волейболын Клиник",
+    sport: "Волейбол",
     date: "August 14 – 20, 2024",
     location: "Chiang Mai, Thailand",
     description:
-      "International coaching roster focusing on serve receive systems, mental resilience, and yoga recovery.",
+      "Олон улсын дасгалжуулагчдын бүрэлдэхүүн—приемийн систем, сэтгэлзүйн тэсвэр, йогийн сэргэлтэд төвлөрсөн сургалт.",
     image:
       "https://images.unsplash.com/photo-1517341723685-0189ff20c950?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Future Stars Multi-Sport Academy",
-    sport: "Multi-sport",
+    title: "Ирээдүйн Одод Олон Төрөлтийн Академи",
+    sport: "Олон төрөлт",
     date: "September 9 – 15, 2024",
     location: "Kuala Lumpur, Malaysia",
     description:
-      "Holistic curriculum combining skill acquisition, nutrition workshops, and study lounges for student-athletes.",
+      "Ур чадвар олж авах сургалт, хоол тэжээлийн воркшоп, сурагч-спортчдод зориулсан унших/сурах lounge-уудыг нэгтгэсэн цогц хөтөлбөр.",
     image:
       "https://images.unsplash.com/photo-1529429617124-aee3712c8f31?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Elite Goalkeeper Intensive",
-    sport: "Football",
+    title: "Элит Хаалгачдын Эрчимжүүлсэн Курс",
+    sport: "Хөлбөмбөг",
     date: "October 22 – 27, 2024",
     location: "Seoul, South Korea",
     description:
-      "Position-specific training, data-driven feedback, and immersive K-League match analysis sessions.",
+      "Байрлалд суурилсан тусгай бэлтгэл, өгөгдөлд тулгуурласан буцаан холбоо, K-League-ийн тоглолтын гүн шинжилгээтэй сессүүд.",
     image:
       "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=900&q=80",
   },
@@ -44,21 +44,24 @@ const camps = [
 export default function CampsPage() {
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
+      {/* --- Толгой хэсэг --- */}
       <section className="border-b border-slate-200 bg-white/80">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Camp Training
+            Кэмп сургалт
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Intensives designed to accelerate skills and mindset
+            Ур чадвар, сэтгэлзүйг түргэвчилж ахиулах эрчимжүүлсэн хөтөлбөрүүд
           </h1>
           <p className="mt-4 max-w-3xl text-sm text-slate-600">
-            Every Gateway camp balances technical mastery, cultural immersion,
-            and wellness to ensure athletes return home inspired and prepared.
+            Gateway кэмп бүр техникийн ур чадвар, соёлын туршлага, сайн сайхныг
+            тэнцвэржүүлж, тамирчдыг урам зоригтой, бэлтгэлтэйгээр гэрт нь
+            буцаахыг зорьдог.
           </p>
         </div>
       </section>
 
+      {/* --- Кэмпүүдийн жагсаалт --- */}
       <section className="bg-white/90">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="grid gap-8 sm:grid-cols-2">
@@ -70,7 +73,7 @@ export default function CampsPage() {
                 <div
                   className="h-44 w-full bg-cover bg-center"
                   style={{ backgroundImage: `url(${camp.image})` }}
-                  aria-label={`${camp.title} photo`}
+                  aria-label={`${camp.title} кэмпийн зураг`}
                 />
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-primary/80">
@@ -85,7 +88,7 @@ export default function CampsPage() {
                   </p>
                   <p className="text-sm text-slate-600">{camp.description}</p>
                   <div className="mt-auto pt-4 text-sm font-semibold text-primary">
-                    Request camp deck
+                    Кэмпийн танилцуулга авах
                   </div>
                 </div>
               </div>
