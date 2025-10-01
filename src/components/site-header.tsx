@@ -2,18 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Facebook, Instagram, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { HyperText } from "./ui/hyper-text";
+import { Button } from "./ui/button";
 
 const navigation = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Travel", href: "/travel" },
-  { label: "Competitions", href: "/competitions" },
+  { label: "Нүүр", href: "/" },
+  { label: "Бидний тухай", href: "/about" },
+  { label: "Аялал", href: "/travel" },
+  { label: "Тэмцээнүүд", href: "/competitions" },
   { label: "Camp Training", href: "/camps" },
-  { label: "Past Events", href: "/past-events" },
-  { label: "Album", href: "/album" },
-  { label: "Contact", href: "/contact" },
+  { label: "Зургийн цомог", href: "/album" },
+  { label: "Холбоо барих", href: "/contact" },
 ];
 
 export function SiteHeader() {
@@ -27,13 +28,17 @@ export function SiteHeader() {
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-secondary text-white shadow-lg">
             <span className="text-xl font-black">GT</span>
           </div>
-          <div className="leading-tight">
-            <p className="text-sm font-semibold text-slate-500">Gateway Sports</p>
-            <p className="text-lg font-bold text-slate-900">Travel Management</p>
+          <div className="leading-tight -space-y-4 w-[160px]  ">
+            <HyperText className="text-xs font-semibold text-slate-500">
+              Gateway Sports
+            </HyperText>
+            <HyperText className="text-xs font-semibold text-slate-500">
+              Travel Management
+            </HyperText>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-2 text-sm font-medium text-slate-600 lg:flex">
+        <nav className="hidden items-center gap-2 text-xs font-medium text-slate-600 lg:flex">
           {navigation.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -51,6 +56,22 @@ export function SiteHeader() {
             );
           })}
         </nav>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 hover-glow hover:bg-[#261F61]/10 hover:text-[#261F61]"
+          >
+            <Facebook className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 hover-glow hover:bg-[#261F61]/10 hover:text-[#261F61]"
+          >
+            <Instagram className="w-4 h-4" />
+          </Button>
+        </div>
 
         <button
           type="button"

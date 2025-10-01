@@ -70,8 +70,8 @@ const ReviewCard = ({}: {
 
 export function Affiliate() {
   return (
-    <section className="relative overflow-hidden md:px-[109px] flex items-center my-[106px] ">
-      <div className="container mx-auto">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
         <div className=" text-center text-[40px] mb-[50px] font-bold ">
           Хамтрагч Байгууллагууд
         </div>

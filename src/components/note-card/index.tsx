@@ -3,8 +3,8 @@ import { Card } from "../ui/card";
 
 export function NoteCard() {
   return (
-    <section className="relative overflow-hidden md:px-[109px] flex items-center my-[106px] p-3 md:p-0">
-      <div className="container mx-auto">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
         <Card className="p-8 bg-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Left side - Image placeholders */}

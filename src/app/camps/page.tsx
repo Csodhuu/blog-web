@@ -53,7 +53,8 @@ export default function CampsPage() {
             Intensives designed to accelerate skills and mindset
           </h1>
           <p className="mt-4 max-w-3xl text-sm text-slate-600">
-            Every Gateway camp balances technical mastery, cultural immersion, and wellness to ensure athletes return home inspired and prepared.
+            Every Gateway camp balances technical mastery, cultural immersion,
+            and wellness to ensure athletes return home inspired and prepared.
           </p>
         </div>
       </section>
@@ -76,8 +77,12 @@ export default function CampsPage() {
                     <span>{camp.sport}</span>
                     <span>{camp.date}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900">{camp.title}</h3>
-                  <p className="text-sm font-medium text-slate-500">{camp.location}</p>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    {camp.title}
+                  </h3>
+                  <p className="text-sm font-medium text-slate-500">
+                    {camp.location}
+                  </p>
                   <p className="text-sm text-slate-600">{camp.description}</p>
                   <div className="mt-auto pt-4 text-sm font-semibold text-primary">
                     Request camp deck

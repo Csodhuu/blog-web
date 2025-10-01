@@ -2,8 +2,8 @@ import { ChevronRight } from "lucide-react";
 
 export function ClubCard() {
   return (
-    <section className="relative overflow-hidden md:px-[109px] flex items-center p-3 md:p-0 ">
-      <div className="container mx-auto">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
         <div className=" mx-auto bg-indigo-900 rounded-lg p-4 md:p-8 flex flex-col md:flex-row items-center gap-4 md:gap-8 min-h-[200px]">
           {/* Left Section - Logo and Club Info */}
           <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-center md:justify-start">

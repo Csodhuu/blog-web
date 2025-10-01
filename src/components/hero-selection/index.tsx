@@ -2,8 +2,8 @@ import { TypingAnimation } from "../ui/typing-animation";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden md:px-[109px] min-h-screen flex items-center">
-      <div className="container mx-auto px-4 ">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">

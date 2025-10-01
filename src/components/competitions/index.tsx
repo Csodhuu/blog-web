@@ -88,8 +88,8 @@ const getBadgeVariant = (badge: string) => {
 
 export function Competitions() {
   return (
-    <section className="relative overflow-hidden md:px-[109px] flex items-center my-[106px] p-4 md:p-0">
-      <div className="container mx-auto">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-card-foreground mb-4 text-balance">
