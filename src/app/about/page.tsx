@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 type AboutTimelineItem = {
   year: string;
   milestone: string;
+  _id?: string;
 };
 
 type AboutCapability = {
   title: string;
   description: string;
+  _id?: string;
 };
 type AboutPayload = {
   paragraphImage: string;
@@ -20,6 +22,7 @@ type AboutPayload = {
   paragraphs: string[];
   capabilities: AboutCapability[];
 };
+type AboutApiResponse = AboutPayload | AboutPayload[];
 
 export default function AboutPage() {
   const [data, setData] = useState<AboutPayload | null>(null);
@@ -34,10 +37,13 @@ export default function AboutPage() {
         const url = `${BASEURL}/about`;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`Response status: ${res.status}`);
-        const json: AboutPayload = await res.json();
-        setData(json ?? null);
-      } catch (e: any) {
-        setError(e?.message || "Алдаа гарлаа");
+        const json: AboutApiResponse = await res.json();
+        const normalized = Array.isArray(json) ? json[0] ?? null : json ?? null;
+        setData(normalized);
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Алдаа гарлаа";
+        setError(message);
         setData(null);
       } finally {
         setLoading(false);
@@ -90,9 +96,7 @@ export default function AboutPage() {
     timeline = [],
     capabilities = [],
     achievements = [],
-  } = data[0];
-
-  console.log("About data:", data);
+  } = data;
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
@@ -113,7 +117,7 @@ export default function AboutPage() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-6 text-base text-slate-600">
-              {paragraphs.map((p: any, i: number) => (
+              {paragraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
             </div>
@@ -149,9 +153,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
-              {timeline.map((item: any, idx: number) => (
+              {timeline.map((item, idx) => (
                 <div
-                  key={`${item.year}-${idx}`}
+                  key={item._id ?? `${item.year}-${idx}`}
                   className="rounded-3xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm"
                 >
                   <p className="text-sm font-semibold text-primary">
@@ -173,7 +177,7 @@ export default function AboutPage() {
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
             <h3 className="text-xl font-semibold text-slate-900">Амжилтууд</h3>
             <ul className="mt-6 list-disc space-y-2 pl-6 text-slate-700">
-              {achievements.map((a: any, i: number) => (
+              {achievements.map((a, i) => (
                 <li key={i}>{a}</li>
               ))}
             </ul>
@@ -198,9 +202,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {capabilities.map((c: any, i: number) => (
+              {capabilities.map((c, i) => (
                 <div
-                  key={`${c.title}-${i}`}
+                  key={c._id ?? `${c.title}-${i}`}
                   className="flex h-full flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
                 >
                   <p className="text-base font-semibold text-slate-900">
