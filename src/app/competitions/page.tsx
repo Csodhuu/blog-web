@@ -69,7 +69,6 @@ function getCompetitionCategory(value: ApiCompetitionType) {
 
 function normalizeCompetitions(data: unknown): Competition[] {
   const list = Array.isArray(data) ? data : data ? [data] : [];
-
   return list
     .map((entry) => {
       if (typeof entry !== "object" || entry === null) return null;
@@ -88,7 +87,7 @@ function normalizeCompetitions(data: unknown): Competition[] {
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
         image: item.image?.trim() || DEFAULT_IMAGE,
         category,
-      } satisfies Competition;
+      } as Competition;
     })
     .filter((competition): competition is Competition => competition !== null);
 }
@@ -98,7 +97,9 @@ async function fetchCompetitions(): Promise<CompetitionGroups> {
   const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
-    throw new Error(`Тэмцээний мэдээлэл авахад алдаа гарлаа (${response.status})`);
+    throw new Error(
+      `Тэмцээний мэдээлэл авахад алдаа гарлаа (${response.status})`
+    );
   }
 
   const json = await response.json();
@@ -150,9 +151,9 @@ function EventCard({ event }: { event: Competition }) {
         <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
         <p className="text-sm font-medium text-slate-500">{event.location}</p>
         <p className="text-sm text-slate-600">{event.description}</p>
-        <div className="mt-auto pt-4 text-sm font-semibold text-primary">
+        {/* <div className="mt-auto pt-4 text-sm font-semibold text-primary">
           Хүсэлт илгээх
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -174,6 +175,8 @@ export default async function CompetitionsPage() {
         : "Тэмцээний мэдээллийг авах явцад үл мэдэгдэх алдаа гарлаа.";
     error = message;
   }
+
+  console.log({ upcomingEvents, pastEvents, error });
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
@@ -262,4 +265,3 @@ export default async function CompetitionsPage() {
     </div>
   );
 }
-
