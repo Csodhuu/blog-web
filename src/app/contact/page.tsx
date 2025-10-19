@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Facebook,
   Instagram,
@@ -6,6 +8,9 @@ import {
   MapPin,
   Phone,
 } from "lucide-react";
+import { FormEvent, useState } from "react";
+
+import { BASEURL } from "@/lib/authClient";
 
 const contactDetails = [
   {
@@ -67,6 +72,65 @@ const adminContacts = [
 ];
 
 export default function ContactPage() {
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<
+    | { type: "success"; message: string }
+    | { type: "error"; message: string }
+    | null
+  >(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!phone.trim() || !email.trim()) {
+      setStatus({
+        type: "error",
+        message: "Утас болон имэйлээ оруулна уу.",
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setStatus(null);
+
+      const url = `${BASEURL}/contact`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phone.trim(),
+          email: email.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Хүсэлт илгээх явцад алдаа гарлаа.");
+      }
+
+      setStatus({
+        type: "success",
+        message: "Таны хүсэлтийг амжилттай хүлээн авлаа.",
+      });
+      setPhone("");
+      setEmail("");
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Түр зуурын алдаа гарлаа. Дахин оролдоно уу.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
       {/* --- Толгой хэсэг --- */}
@@ -151,6 +215,64 @@ export default function ContactPage() {
               }}
               aria-label="Gateway Sports Travel оффисын байршлын зураг"
             />
+            <form
+              onSubmit={handleSubmit}
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Холбоо барих хүсэлт илгээх
+              </p>
+              <p className="mt-3 text-sm text-slate-600">
+                Доорх мэдээллийг бөглөснөөр бид тантай холбогдох болно.
+              </p>
+
+              <div className="mt-6 space-y-4">
+                <label className="block text-sm font-medium text-slate-700">
+                  Утасны дугаар
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="+976 9911 2233"
+                    required
+                  />
+                </label>
+
+                <label className="block text-sm font-medium text-slate-700">
+                  Имэйл хаяг
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="mt-6 w-full rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Илгээж байна..." : "Хүсэлт илгээх"}
+              </button>
+
+              {status ? (
+                <div
+                  className={`mt-4 rounded-xl border px-4 py-3 text-sm ${
+                    status.type === "success"
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                      : "border-red-200 bg-red-50 text-red-700"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              ) : null}
+            </form>
+
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 Админ холбогдох хүмүүс
