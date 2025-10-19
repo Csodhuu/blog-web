@@ -35,15 +35,13 @@ export default function CampsPage() {
         }
 
         const json: CampsApiResponse = await res.json();
-        const normalized = Array.isArray(json)
-          ? json
-          : json
-            ? [json]
-            : [];
+        const normalized = Array.isArray(json) ? json : json ? [json] : [];
         setCamps(normalized);
       } catch (error: unknown) {
         const message =
-          error instanceof Error ? error.message : "Өгөгдөл татахад алдаа гарлаа";
+          error instanceof Error
+            ? error.message
+            : "Өгөгдөл татахад алдаа гарлаа";
         setError(message);
         setCamps([]);
       } finally {

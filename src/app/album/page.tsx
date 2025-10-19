@@ -41,9 +41,12 @@ type AlbumCollection = {
 const DEFAULT_COVER =
   "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80";
 
-const parseDate = (value: AlbumApiAlbum["date"] | AlbumApiCollection["year"]) => {
+const parseDate = (
+  value: AlbumApiAlbum["date"] | AlbumApiCollection["year"]
+) => {
   if (!value) return null;
-  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  if (value instanceof Date)
+    return Number.isNaN(value.getTime()) ? null : value;
 
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
@@ -65,7 +68,7 @@ export default function AlbumPage() {
       setLoading(true);
       setError(null);
       try {
-        const url = `${BASEURL}/album`;
+        const url = `${BASEURL}/albums`;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) {
           throw new Error(`Response status: ${res.status}`);
@@ -102,7 +105,7 @@ export default function AlbumPage() {
 
   const hasCollections = useMemo(
     () => collections.some((collection) => collection.albums.length > 0),
-    [collections],
+    [collections]
   );
 
   return (
@@ -161,7 +164,9 @@ export default function AlbumPage() {
       {!loading && !error && !hasCollections ? (
         <section className="border-b border-slate-200 bg-white/90">
           <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-            <p className="text-slate-600">Зургийн цомгийн мэдээлэл олдсонгүй.</p>
+            <p className="text-slate-600">
+              Зургийн цомгийн мэдээлэл олдсонгүй.
+            </p>
           </div>
         </section>
       ) : null}
@@ -181,11 +186,6 @@ export default function AlbumPage() {
               >
                 <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
                   <div className="flex flex-col gap-2">
-                    {yearLabel ? (
-                      <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-                        {yearLabel}
-                      </p>
-                    ) : null}
                     {collection.title ? (
                       <h2 className="text-2xl font-semibold text-slate-900">
                         {collection.title}
@@ -208,7 +208,11 @@ export default function AlbumPage() {
                           <div
                             className="h-44 w-full bg-cover bg-center"
                             style={{ backgroundImage: `url(${album.cover})` }}
-                            aria-label={album.name ? `${album.name} цомгийн зураг` : undefined}
+                            aria-label={
+                              album.name
+                                ? `${album.name} цомгийн зураг`
+                                : undefined
+                            }
                           />
                           <div className="flex flex-1 flex-col gap-2 p-6">
                             {album.name ? (
