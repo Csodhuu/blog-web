@@ -13,7 +13,7 @@ type ApiTravelProgram = {
 };
 
 type TravelProgram = {
-  id?: string;
+  id: string | undefined;
   title: string;
   destination: string;
   date: Date | null;
@@ -66,7 +66,7 @@ async function fetchTravelPrograms(): Promise<TravelProgram[]> {
 
   if (!response.ok) {
     throw new Error(
-      `Аяллын мэдээллийг авахад алдаа гарлаа (${response.status})`,
+      `Аяллын мэдээллийг авахад алдаа гарлаа (${response.status})`
     );
   }
 
@@ -90,7 +90,9 @@ function formatDisplayDate(date: Date | null) {
 
 function createProgramKey(program: TravelProgram, index: number) {
   if (program.id) return program.id;
-  const dateLabel = program.date ? program.date.toISOString() : `no-date-${index}`;
+  const dateLabel = program.date
+    ? program.date.toISOString()
+    : `no-date-${index}`;
   return `${program.title}-${dateLabel}`;
 }
 
@@ -164,9 +166,9 @@ export default async function TravelPage() {
                     <p className="text-sm text-slate-600">
                       {program.description}
                     </p>
-                    <div className="mt-auto pt-4 text-sm font-semibold text-primary">
+                    {/* <div className="mt-auto pt-4 text-sm font-semibold text-primary">
                       Өөрийн хуваарьт захиалга хийх
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ))}
