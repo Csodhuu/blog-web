@@ -1,56 +1,99 @@
-const paragraphs = [
-  "Gateway Sports Travel нь Азийн клубууд болон үндэсний хөтөлбөрүүдийг олон улсын тэмцээнд оролцох боломжийг олгож, тамирчдын сайн сайхныг хохироохгүйгээр байгуулагдсан. Бид хаалганаас хаалга хүртэл аяллын менежмент, спортын онцлогт тохирсон төлөвлөлт, соёлын уялдаа холбоог бүрдүүлж, багуудыг зөвхөн амжилтад төвлөрөхөд нь тусалдаг.",
-  "2011 онд зохион байгуулсан анхны урилгат тэмцээнээс эхлээд өнөөдрийн олон улсын аяллууд хүртэл бид залуусыг өрсөлдөгч болон дэлхийн иргэн болж хөгжих боломжийг бий болгоход үнэнч хэвээр байна. Бүх аяллын хөтөлбөрийг дасгалжуулагчидтай хамтран боловсруулж, эрчимтэй бэлтгэлийн хуваарь, хичээлийн үүрэг, амралтын туршлагуудыг зөв тэнцвэржүүлдэг.",
-  "Холбоод, элчин сайдын яамд болон тансаг зэрэглэлийн түншүүдтэй байгуулсан харилцааны ачаар бид логистикийг нарийн зохицуулдаг. Танай баг тивийн аваргын эрхийн төлөө тэмцэж байгаа эсвэл хөгжлийн шинэ шат руу үсрэлт хийх гэж байгаа эсэхээс үл хамааран Gateway Sports Travel нь итгэлтэй хэрэгжүүлэх бүтэц, газар дээрх дэмжлэгийг үзүүлнэ.",
-];
+"use client";
+import { BASEURL } from "@/lib/authClient";
+import { useEffect, useState } from "react";
 
-const timeline = [
-  {
-    year: "2011",
-    milestone:
-      "Манилад зохион байгуулсан анхны сагсан бөмбөгийн урилгат тэмцээнээр Gateway Sports Travel-ийг эхлүүлж, таван бүсийн академийг хүлээн авсан.",
-  },
-  {
-    year: "2015",
-    milestone:
-      "Олон спортын аяллыг өргөжүүлж, соёлын аяллуудын хамт волейбол, футзал, усан сэлэлтийн солилцоог эхлүүлсэн.",
-  },
-  {
-    year: "2018",
-    milestone:
-      "Залуучуудын багуудын виз болон бичиг баримтын үйлчилгээг 12 оронд нэвтрүүлж, баримт бичгийн урсгалыг хялбаршуулсан.",
-  },
-  {
-    year: "2021",
-    milestone:
-      "Gateway Performance Network-ийг байгуулж, спортын эрдэмтэн, хоол тэжээлийн мэргэжилтэн, хэлний багш нарыг бүх аялалд холбосон.",
-  },
-  {
-    year: "2024",
-    milestone:
-      "Жилд 600+ тамирчныг хосолсон аяллын хөтөлбөрөөр (тэмцээн, бэлтгэл, боловсролын аялал) амжилттай зохион байгуулж тэмдэглэсэн.",
-  },
-];
+type AboutTimelineItem = {
+  year: string;
+  milestone: string;
+};
 
-const capabilities = [
-  {
-    title: "Аяллын менежмент",
-    description:
-      "Тэмцээний хуваарьт тохируулан нислэгийн чартераас эхлээд байр, даатгал, газар дээрх тээвэрлэлтийг цогцоор нь зохион байгуулна.",
-  },
-  {
-    title: "Арга хэмжээ зохион байгуулалт",
-    description:
-      "Заал захиалах, техникийн шүүгч, тэмцээн, нөхөрсөг тоглолт, үзүүлбэрүүдийг таны зорилгод тохируулан бүрэн зохион байгуулна.",
-  },
-  {
-    title: "Виз болон нийцэл",
-    description:
-      "Манай мэргэжилтнүүд оролцогч бүрийн орох нөхцөл, урилгын бичиг, асран хамгаалагчийн зохицуулалтыг хариуцан хөнгөвчилдөг.",
-  },
-];
+type AboutCapability = {
+  title: string;
+  description: string;
+};
+type AboutPayload = {
+  paragraphImage: string;
+  title: string;
+  content: string;
+  timeline: AboutTimelineItem[];
+  achievements: string[];
+  paragraphs: string[];
+  capabilities: AboutCapability[];
+};
 
 export default function AboutPage() {
+  const [data, setData] = useState<AboutPayload | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const url = `${BASEURL}/about`;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Response status: ${res.status}`);
+        const json: AboutPayload = await res.json();
+        setData(json ?? null);
+      } catch (e: any) {
+        setError(e?.message || "Алдаа гарлаа");
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAbout();
+  }, []);
+
+  // ——— UI States
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <div className="h-4 w-24 rounded bg-slate-200" />
+        <div className="mt-4 h-8 w-3/4 rounded bg-slate-200" />
+        <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
+          <div className="space-y-3">
+            <div className="h-4 w-full rounded bg-slate-100" />
+            <div className="h-4 w-11/12 rounded bg-slate-100" />
+            <div className="h-4 w-10/12 rounded bg-slate-100" />
+          </div>
+          <div className="h-64 rounded-3xl border border-slate-200 bg-slate-100" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <p className="text-slate-600">Өгөгдөл олдсонгүй.</p>
+      </div>
+    );
+  }
+
+  const {
+    paragraphImage,
+    title,
+    content,
+    paragraphs = [],
+    timeline = [],
+    capabilities = [],
+    achievements = [],
+  } = data[0];
+
+  console.log("About data:", data);
+
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
       {/* --- Бидний тухай --- */}
@@ -60,16 +103,29 @@ export default function AboutPage() {
             Бидний тухай
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Gateway Sports Travel: Багуудыг дэлхийн туршлагаар хөгжилд хөтөлнө
+            {title || "Gateway Sports Travel"}
           </h1>
+
+          {/* content (товч танилцуулга) */}
+          {content ? (
+            <p className="mt-4 max-w-3xl text-slate-700">{content}</p>
+          ) : null}
+
           <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-6 text-base text-slate-600">
-              {paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
+              {paragraphs.map((p: any, i: number) => (
+                <p key={i}>{p}</p>
               ))}
             </div>
+
             <div
-              className="rounded-3xl border border-slate-200 bg-[url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=900&q=80')] bg-cover bg-center shadow-inner"
+              className="rounded-3xl border border-slate-200 bg-cover bg-center shadow-inner"
+              style={{
+                minHeight: 280,
+                backgroundImage: paragraphImage
+                  ? `url('${paragraphImage}')`
+                  : "url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=900&q=80')",
+              }}
               aria-hidden
             />
           </div>
@@ -77,72 +133,86 @@ export default function AboutPage() {
       </section>
 
       {/* --- Манай аялал --- */}
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Манай аялал
-            </p>
-            <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-              Гол мөчүүд
-            </h2>
-            <p className="text-sm text-slate-600">
-              Сүүлийн арван жилд бид спортын төрөл, очих газар, үйлчилгээний цар
-              хүрээг өргөжүүлсэн ч анхаарал халамжийн чанарыг байнга хадгалсаар
-              ирсэн.
-            </p>
+      {timeline.length > 0 && (
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="max-w-3xl space-y-4">
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Манай аялал
+              </p>
+              <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
+                Гол мөчүүд
+              </h2>
+              <p className="text-sm text-slate-600">
+                Сүүлийн жилүүдэд үйлчилгээгээ өргөжүүлэхийн зэрэгцээ чанарыг
+                тогтвортой баримталсаар ирсэн.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {timeline.map((item: any, idx: number) => (
+                <div
+                  key={`${item.year}-${idx}`}
+                  className="rounded-3xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm"
+                >
+                  <p className="text-sm font-semibold text-primary">
+                    {item.year}
+                  </p>
+                  <p className="mt-3 text-base font-medium text-slate-800">
+                    {item.milestone}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {timeline.map((item) => (
-              <div
-                key={item.year}
-                className="rounded-3xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm"
-              >
-                <p className="text-sm font-semibold text-primary">
-                  {item.year}
-                </p>
-                <p className="mt-3 text-base font-medium text-slate-800">
-                  {item.milestone}
-                </p>
-              </div>
-            ))}
+        </section>
+      )}
+
+      {/* --- Амжилтууд (байвал) --- */}
+      {achievements.length > 0 && (
+        <section className="bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <h3 className="text-xl font-semibold text-slate-900">Амжилтууд</h3>
+            <ul className="mt-6 list-disc space-y-2 pl-6 text-slate-700">
+              {achievements.map((a: any, i: number) => (
+                <li key={i}>{a}</li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* --- Бид юу хийж чадна --- */}
-      <section className="bg-white/90">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Бид юу хийж чадна
-            </p>
-            <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-              Аялал, арга хэмжээ, визийн иж бүрэн шийдэл
-            </h2>
-            <p className="text-sm text-slate-600">
-              Бид дасгалжуулагчид, спортын удирдлагууд болон асран
-              хамгаалагчидтай хамтран, тэмцээний хуваарь болон хичээлийн
-              үүрэгтэй уялдсан цогц шийдлийг санал болгодог.
-            </p>
+      {capabilities.length > 0 && (
+        <section className="bg-white/90">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="max-w-3xl space-y-4">
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Бид юу хийж чадна
+              </p>
+              <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
+                Аялал, арга хэмжээ, визийн иж бүрэн шийдэл
+              </h2>
+              <p className="text-sm text-slate-600">
+                Дасгалжуулагчид болон асран хамгаалагчидтай нягт уялдуулсан цогц
+                шийдлүүдийг санал болгодог.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 md:grid-cols-3">
+              {capabilities.map((c: any, i: number) => (
+                <div
+                  key={`${c.title}-${i}`}
+                  className="flex h-full flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+                >
+                  <p className="text-base font-semibold text-slate-900">
+                    {c.title}
+                  </p>
+                  <p className="text-sm text-slate-600">{c.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {capabilities.map((capability) => (
-              <div
-                key={capability.title}
-                className="flex h-full flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <p className="text-base font-semibold text-slate-900">
-                  {capability.title}
-                </p>
-                <p className="text-sm text-slate-600">
-                  {capability.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
