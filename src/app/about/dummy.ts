@@ -49,3 +49,9 @@ const capabilities = [
       "Манай мэргэжилтнүүд оролцогч бүрийн орох нөхцөл, урилгын бичиг, асран хамгаалагчийн зохицуулалтыг хариуцан хөнгөвчилдөг.",
   },
 ];
+
+export const aboutDummy = {
+  paragraphs,
+  timeline,
+  capabilities,
+};
