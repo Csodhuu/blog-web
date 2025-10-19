@@ -1,85 +1,140 @@
-const upcomingEvents = [
-  {
-    title: "Gateway U18 Сагсан Бөмбөгийн Урилгат Тэмцээн",
-    sport: "Сагсан бөмбөг",
-    date: "2024-08-15",
-    location: "Singapore Sports Hub, Сингапур",
-    description:
-      "Шилдэг академиудын хүрээнд тойргийн тоглолтууд зохион байгуулж, өгөгдөл-аналитик дэмжлэг, сэргэлтийн станцууд, соёлын хөтөлбөрт хамруулна.",
-    image:
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    title: "ASEAN Эмэгтэйчүүдийн Волейболын Классик",
-    sport: "Волейбол",
-    date: "2024-09-02",
-    location: "Bangkok Arena, Тайланд",
-    description:
-      "FIVB-ийн гэрчилгээтэй шүүгчидтэй, телевизийн шууд дамжуулалттай найман багийн урилгат тэмцээн. Төлөөлөгчдөд зориулсан аяллын тусгай хөтөлбөртэй.",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    title: "Gateway Футзал Мастерс",
-    sport: "Футзал",
-    date: "2024-10-05",
-    location: "Куала Лумпур, Малайз",
-    description:
-      "Залуучууд болон насанд хүрэгчдийн ангилалтай, хурдтай өрнөх танхимын тэмцээн. Дасгалжуулагчдын мастер-класс дагалдана.",
-    image:
-      "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=900&q=80",
-  },
-];
+import { BASEURL } from "@/lib/authClient";
 
-const pastEvents = [
-  {
-    title: "Дананг Найрамдлын Цом",
-    sport: "Сагсан бөмбөг",
-    date: "2023-10-12",
-    location: "Дананг, Вьетнам",
-    description:
-      "Хөвгүүд, охидын хамтарсан тэмцээнийг лидершип воркшоп, эргийн экосистемийн сайн дурын үйл ажиллагаатай уялдуулан зохион байгуулсан.",
-    image:
-      "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    title: "Токио Ур Чадварын Фестиваль",
-    sport: "Волейбол",
-    date: "2023-07-28",
-    location: "Токио, Япон",
-    description:
-      "Японы их сургуулийн багуудтай гурван өдрийн үзүүлэх тоглолт, хоёр хэл дээрх шагнал гардуулах ёслолоор өндөрлөсөн.",
-    image:
-      "https://images.unsplash.com/photo-1517341723685-0189ff20c950?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    title: "Бали Нэгдлийн Тоглолтууд",
-    sport: "Олон төрөлт",
-    date: "2022-11-18",
-    location: "Бали, Индонез",
-    description:
-      "Сагсан бөмбөг, волейбол, футзалын арга хэмжээг гар урлал, олон нийттэй уулзалт, төгсөгчдийн уулзалтуудтай хослуулсан.",
-    image:
-      "https://images.unsplash.com/photo-1529429617124-aee3712c8f31?auto=format&fit=crop&w=900&q=80",
-  },
-];
+export const revalidate = 0;
 
-function formatDisplayDate(date: string) {
-  return new Date(date).toLocaleDateString("en-CA");
+type ApiCompetitionType =
+  | "upcomingEvents"
+  | "pastEvents"
+  | { type?: "upcomingEvents" | "pastEvents" | null }
+  | null
+  | undefined;
+
+type ApiCompetition = {
+  _id?: string;
+  id?: string;
+  title?: string;
+  sport?: string;
+  date?: string | Date | null;
+  location?: string;
+  description?: string;
+  image?: string;
+  type?: ApiCompetitionType;
+};
+
+type Competition = {
+  id?: string;
+  title: string;
+  sport: string;
+  date: Date | null;
+  location: string;
+  description: string;
+  image: string;
+  category: "upcomingEvents" | "pastEvents";
+};
+
+type CompetitionGroups = {
+  upcoming: Competition[];
+  past: Competition[];
+};
+
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80";
+
+const FALLBACK_TITLE = "Тэмцээний нэр тодорхойгүй";
+const FALLBACK_SPORT = "Спорт төрөл тодорхойгүй";
+const FALLBACK_LOCATION = "Байршил тодорхойгүй";
+const FALLBACK_DESCRIPTION = "Тайлбар бэлэн болоход шинэчлэгдэнэ.";
+
+function parseDate(value: ApiCompetition["date"]): Date | null {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function EventCard({
-  event,
-}: {
-  event: {
-    title: string;
-    sport: string;
-    date: string;
-    location: string;
-    description: string;
-    image: string;
-  };
-}) {
+function getCompetitionCategory(value: ApiCompetitionType) {
+  if (!value) return null;
+
+  if (typeof value === "string") {
+    return value === "upcomingEvents" || value === "pastEvents" ? value : null;
+  }
+
+  const nested = value.type;
+  return nested === "upcomingEvents" || nested === "pastEvents" ? nested : null;
+}
+
+function normalizeCompetitions(data: unknown): Competition[] {
+  const list = Array.isArray(data) ? data : data ? [data] : [];
+
+  return list
+    .map((entry) => {
+      if (typeof entry !== "object" || entry === null) return null;
+
+      const item = entry as ApiCompetition;
+      const category = getCompetitionCategory(item.type);
+
+      if (!category) return null;
+
+      return {
+        id: item._id ?? item.id,
+        title: item.title?.trim() || FALLBACK_TITLE,
+        sport: item.sport?.trim() || FALLBACK_SPORT,
+        date: parseDate(item.date),
+        location: item.location?.trim() || FALLBACK_LOCATION,
+        description: item.description?.trim() || FALLBACK_DESCRIPTION,
+        image: item.image?.trim() || DEFAULT_IMAGE,
+        category,
+      } satisfies Competition;
+    })
+    .filter((competition): competition is Competition => competition !== null);
+}
+
+async function fetchCompetitions(): Promise<CompetitionGroups> {
+  const url = `${BASEURL}/competitions`;
+  const response = await fetch(url, { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error(`Тэмцээний мэдээлэл авахад алдаа гарлаа (${response.status})`);
+  }
+
+  const json = await response.json();
+  const competitions = normalizeCompetitions(json);
+
+  const upcoming = competitions
+    .filter((competition) => competition.category === "upcomingEvents")
+    .sort((a, b) => {
+      const timeA = a.date ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
+      const timeB = b.date ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
+      return timeA - timeB;
+    });
+
+  const past = competitions
+    .filter((competition) => competition.category === "pastEvents")
+    .sort((a, b) => {
+      const timeA = a.date ? a.date.getTime() : Number.MIN_SAFE_INTEGER;
+      const timeB = b.date ? b.date.getTime() : Number.MIN_SAFE_INTEGER;
+      return timeB - timeA;
+    });
+
+  return { upcoming, past };
+}
+
+function formatDisplayDate(date: Date | null) {
+  if (!date) return "Огноо тодорхойгүй";
+  return date.toLocaleDateString("en-CA");
+}
+
+function createEventKey(event: Competition, index: number) {
+  if (event.id) return event.id;
+  const dateLabel = event.date ? event.date.toISOString() : `no-date-${index}`;
+  return `${event.title}-${dateLabel}`;
+}
+
+function EventCard({ event }: { event: Competition }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       <div
@@ -103,14 +158,25 @@ function EventCard({
   );
 }
 
-export default function CompetitionsPage() {
-  const sortedUpcoming = [...upcomingEvents].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+export default async function CompetitionsPage() {
+  let upcomingEvents: Competition[] = [];
+  let pastEvents: Competition[] = [];
+  let error: string | null = null;
+
+  try {
+    const competitions = await fetchCompetitions();
+    upcomingEvents = competitions.upcoming;
+    pastEvents = competitions.past;
+  } catch (err) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : "Тэмцээний мэдээллийг авах явцад үл мэдэгдэх алдаа гарлаа.";
+    error = message;
+  }
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
-      {/* --- Толгой хэсэг --- */}
       <section className="border-b border-slate-200 bg-white/80">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
@@ -128,47 +194,72 @@ export default function CompetitionsPage() {
         </div>
       </section>
 
-      {/* --- Ирэх тэмцээнүүд --- */}
-      <section className="border-b border-slate-200 bg-white/90">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4">
-            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Ирэх тэмцээнүүд
-            </p>
-            <h2 className="text-2xl font-semibold text-slate-900">
-              Дараагийн тэмцээндээ эрхээ баталгаажуулаарай
-            </h2>
+      {error ? (
+        <section className="border-b border-slate-200 bg-white/90">
+          <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+              {error}
+            </div>
           </div>
-          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {sortedUpcoming.map((event) => (
-              <EventCard key={event.title} event={event} />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
-      {/* --- Өмнөх тэмцээнүүд --- */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4">
-            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-              Өмнөх тэмцээнүүд
-            </p>
-            <h2 className="text-2xl font-semibold text-slate-900">
-              Өмнөх аяллуудын онцлох агшин
-            </h2>
-            <p className="max-w-3xl text-sm text-slate-600">
-              Өмнөх арга хэмжээнүүдийн тайлан, бичлэгийн дүгнэлт, тусгай фото
-              цомгууд нь тамирчдыг урамшуулж, оролцоог нь хадгалдаг.
-            </p>
+      {!error ? (
+        <section className="border-b border-slate-200 bg-white/90">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-4">
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Ирэх тэмцээнүүд
+              </p>
+              <h2 className="text-2xl font-semibold text-slate-900">
+                Дараагийн тэмцээндээ эрхээ баталгаажуулаарай
+              </h2>
+            </div>
+            {upcomingEvents.length > 0 ? (
+              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {upcomingEvents.map((event, index) => (
+                  <EventCard key={createEventKey(event, index)} event={event} />
+                ))}
+              </div>
+            ) : (
+              <p className="mt-8 text-sm text-slate-600">
+                Одоогоор ирэх тэмцээний мэдээлэл байхгүй байна.
+              </p>
+            )}
           </div>
-          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {pastEvents.map((event) => (
-              <EventCard key={`${event.title}-${event.date}`} event={event} />
-            ))}
+        </section>
+      ) : null}
+
+      {!error ? (
+        <section className="bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-4">
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Өмнөх тэмцээнүүд
+              </p>
+              <h2 className="text-2xl font-semibold text-slate-900">
+                Өмнөх аяллуудын онцлох агшин
+              </h2>
+              <p className="max-w-3xl text-sm text-slate-600">
+                Өмнөх арга хэмжээнүүдийн тайлан, бичлэгийн дүгнэлт, тусгай фото
+                цомгууд нь тамирчдыг урамшуулж, оролцоог нь хадгалдаг.
+              </p>
+            </div>
+            {pastEvents.length > 0 ? (
+              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {pastEvents.map((event, index) => (
+                  <EventCard key={createEventKey(event, index)} event={event} />
+                ))}
+              </div>
+            ) : (
+              <p className="mt-8 text-sm text-slate-600">
+                Өмнөх тэмцээний мэдээлэл одоогоор байхгүй байна.
+              </p>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }
+
