@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { Roboto, Roboto_Condensed } from "next/font/google";
+import { SiteHeader } from "@/components/site-header";
+import type { Metadata } from "next";
+import { Roboto_Condensed } from "next/font/google";
+import "./globals.css";
 
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],

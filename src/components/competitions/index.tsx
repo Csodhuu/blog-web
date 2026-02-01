@@ -4,6 +4,7 @@ import { BASEURL } from "@/lib/authClient";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { Download } from "lucide-react";
+import Link from "next/link";
 
 export const revalidate = 0;
 
@@ -24,6 +25,13 @@ type ApiCompetition = {
   description?: string;
   image?: string;
   type?: ApiCompetitionType;
+
+  // ✅ API дээр линк/файл байдаг бол эндээс авна
+  // (зарим backend дээр pdfUrl, attachmentUrl г.м байж болно)
+  link?: string;
+  pdfUrl?: string;
+  fileUrl?: string;
+  attachmentUrl?: string;
 };
 
 type Competition = {
@@ -33,8 +41,10 @@ type Competition = {
   date: Date | null;
   location: string;
   description: string;
+
   image: string;
   category: "upcomingEvents" | "pastEvents";
+  link?: string; // ✅ заримд нь байхгүй байж болно
 };
 
 type CompetitionGroups = {
@@ -42,8 +52,9 @@ type CompetitionGroups = {
   past: Competition[];
 };
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80";
+// ⚠️ Next/Image remote domain тохиргоо хийгдээгүй бол гаднын URL-ууд алдаа өгнө
+// Тиймээс default-оо local байлгавал найдвартай.
+const DEFAULT_IMAGE = "/images/image1.jpg"; // өөрийн placeholder зураг байвал солино
 
 const FALLBACK_TITLE = "Тэмцээний нэр тодорхойгүй";
 const FALLBACK_SPORT = "Спорт төрөл тодорхойгүй";
@@ -72,8 +83,26 @@ function getCompetitionCategory(value: ApiCompetitionType) {
   return nested === "upcomingEvents" || nested === "pastEvents" ? nested : null;
 }
 
+function pickLink(item: ApiCompetition): string | undefined {
+  // ✅ backend чинь линкээ өөр нэрээр өгдөг байж болно гэж тооцоод олон хувилбар шалгав
+  const raw =
+    item.link ?? item.pdfUrl ?? item.fileUrl ?? item.attachmentUrl ?? undefined;
+
+  const trimmed = typeof raw === "string" ? raw.trim() : "";
+
+  // хоосон бол undefined
+  if (!trimmed) return undefined;
+
+  // Хэрэв backend relative өгдөг бол BASEURL-тай нийлүүлж болно (сонголт)
+  // ж: "/uploads/file.pdf"
+  if (trimmed.startsWith("/")) return `${BASEURL}${trimmed}`;
+
+  return trimmed;
+}
+
 function normalizeCompetitions(data: unknown): Competition[] {
   const list = Array.isArray(data) ? data : data ? [data] : [];
+
   return list
     .map((entry) => {
       if (typeof entry !== "object" || entry === null) return null;
@@ -82,6 +111,8 @@ function normalizeCompetitions(data: unknown): Competition[] {
       const category = getCompetitionCategory(item.type);
 
       if (!category) return null;
+
+      const link = pickLink(item);
 
       return {
         id: item._id ?? item.id,
@@ -92,6 +123,7 @@ function normalizeCompetitions(data: unknown): Competition[] {
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
         image: item.image?.trim() || DEFAULT_IMAGE,
         category,
+        link, // ✅ эндээс undefined биш үедээ л Link render хийнэ
       } as Competition;
     })
     .filter((competition): competition is Competition => competition !== null);
@@ -139,8 +171,16 @@ function formatDateRange(date: Date | null) {
   if (!date) return "Огноо тодорхойгүй";
   return date.toLocaleDateString("en-CA");
 }
+
+function isSafeNextImageSrc(src: string) {
+  // ✅ remote domains тохиргоо байхгүй үед next/image алдаа өгдөг
+  // local path ("/images/...") бол ok
+  return src.startsWith("/");
+}
+
 function CompetitionCard({ item }: { item: Competition }) {
-  console.log(item.image);
+  const canDownload = Boolean(item.link);
+
   return (
     <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-0">
       {/* LEFT CONTENT */}
@@ -168,21 +208,38 @@ function CompetitionCard({ item }: { item: Competition }) {
 
         {/* BUTTON */}
         <div className="mt-10">
-          <Button className=" px-8 py-6 text-base">
-            Танилцуулга татах <Download />
-          </Button>
+          {canDownload ? (
+            <Link href={item.link!} target="_blank" rel="noreferrer">
+              <Button className="px-8 py-6 text-base">
+                Танилцуулга татах <Download className="ml-2" />
+              </Button>
+            </Link>
+          ) : (
+            <Button className="px-8 py-6 text-base" disabled>
+              Танилцуулга байхгүй <Download className="ml-2" />
+            </Button>
+          )}
         </div>
       </div>
 
       {/* RIGHT IMAGE */}
       <div className="relative min-h-[320px] bg-slate-200">
-        <Image
-          src={item.image}
-          alt={item.title}
-          fill
-          className="object-cover"
-          priority
-        />
+        {isSafeNextImageSrc(item.image) ? (
+          <Image
+            src={item.image}
+            alt={item.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          // ✅ remote зураг орж ирвэл next/image hostname error-оос хамгаалаад img ашиглана
+          <img
+            src={item.image}
+            alt={item.title}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
       </div>
     </Card>
   );
@@ -223,9 +280,9 @@ export async function Competitions() {
           </div>
         ) : null}
 
-        {/* Grid */}
+        {/* List */}
         {!error ? (
-          <div>
+          <div className="space-y-8">
             {items.length > 0 ? (
               items.map((item, index) => (
                 <CompetitionCard

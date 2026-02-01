@@ -20,7 +20,7 @@ export function ClubCard() {
               />
             </div>
 
-            <div className="text-center h-[98px] text-[25px] font-bold flex items-center justify-center ">
+            <div className="text-center h-[58px] text-[25px] font-bold ">
               Эрчимжүүлсэн бэлтгэл
             </div>
           </Card>
@@ -33,7 +33,7 @@ export function ClubCard() {
                 className="object-cover"
               />
             </div>
-            <div className="text-center h-[98px] text-[25px] font-bold flex items-center justify-center ">
+            <div className="text-center h-[58px] text-[25px] font-bold  ">
               Тэмцээн, уралдаан
             </div>
           </Card>
@@ -46,7 +46,7 @@ export function ClubCard() {
                 className="object-cover"
               />
             </div>
-            <div className="text-center h-[98px] text-[25px] font-bold flex items-center justify-center ">
+            <div className="text-center h-[58px] text-[25px] font-bold  ">
               Аялал
             </div>
           </Card>

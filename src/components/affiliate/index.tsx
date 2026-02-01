@@ -1,85 +1,133 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Marquee } from "../ui/marquee";
+import { BASEURL } from "@/lib/authClient";
 
-const reviews = [
-  {
-    name: "Jack",
-    username: "@jack",
-    body: "I've never seen anything like this before. It   amazing. I love it.",
-    img: "https://avatar.vercel.sh/jack",
-  },
-  {
-    name: "Jill",
-    username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: "https://avatar.vercel.sh/jill",
-  },
-  {
-    name: "John",
-    username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/john",
-  },
-  {
-    name: "Jane",
-    username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jane",
-  },
-  {
-    name: "Jenny",
-    username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jenny",
-  },
-  {
-    name: "James",
-    username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/james",
-  },
-];
-
-const firstRow = reviews.slice(0, reviews.length / 2);
-
-const ReviewCard = ({}: {
-  img: string;
+type PartnerEntity = {
+  _id: string;
   name: string;
-  username: string;
-  body: string;
-}) => {
+  image: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+const FALLBACK_LOGO =
+  "https://placehold.co/400x400/png?text=Partner&font=roboto";
+
+function ReviewCard({ image, name }: { image: string; name: string }) {
   return (
     <figure
       className={cn(
-        "relative  w-[190px] h-[190px] cursor-pointer overflow-hidden rounded-xl border p-4",
-        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
+        "relative w-[190px] h-[190px] shrink-0 overflow-hidden rounded-2xl border",
+        "border-black/10 bg-white hover:bg-slate-50 transition"
       )}
     >
       <img
-        alt=""
+        alt={name}
         className="absolute inset-0 h-full w-full object-cover"
-        src={
-          "https://en.ephoto360.com/uploads/worigin/2020/03/27/logo-pornhub-maker-online5e7dcc9d5be9e_4a633e5580ab24932eb44f1473e27d8c.jpg"
-        }
+        src={image || FALLBACK_LOGO}
+        loading="lazy"
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).src = FALLBACK_LOGO;
+        }}
       />
+
+      <div className="absolute inset-x-0 bottom-0 p-3">
+        <div className="rounded-xl bg-black/45 backdrop-blur px-3 py-2">
+          <p className="text-white text-sm font-semibold line-clamp-1">
+            {name}
+          </p>
+        </div>
+      </div>
     </figure>
   );
-};
+}
 
 export function Affiliate() {
+  const [partners, setPartners] = useState<PartnerEntity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+
+    const fetchPartners = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch(`${BASEURL}/partner`, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Response status: ${res.status}`);
+
+        const json = (await res.json()) as PartnerEntity[];
+
+        const normalized = (Array.isArray(json) ? json : [])
+          .filter((p) => p && p._id)
+          .map((p) => ({
+            _id: p._id,
+            name: (p.name ?? "").trim() || "Partner",
+            image: (p.image ?? "").trim() || FALLBACK_LOGO,
+            createdAt: p.createdAt,
+            updatedAt: p.updatedAt,
+          }));
+
+        if (alive) setPartners(normalized);
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : "Алдаа гарлаа";
+        if (alive) {
+          setError(msg);
+          setPartners([]);
+        }
+      } finally {
+        if (alive) setLoading(false);
+      }
+    };
+
+    fetchPartners();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden">
-      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
-        <div className=" text-center text-[40px] mb-[50px] font-bold ">
+      <div className="container mx-auto max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
+        <h2 className="text-center text-[40px] mb-[50px] font-bold">
           Хамтрагч Байгууллагууд
-        </div>
-        <Marquee pauseOnHover className="[--duration:10s]">
-          {firstRow.map((review) => (
-            <ReviewCard key={review.username} {...review} />
-          ))}
-        </Marquee>
+        </h2>
+
+        {loading ? (
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-[190px] h-[190px] rounded-2xl border border-black/10 bg-slate-100 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500 font-medium">{error}</div>
+        ) : partners.length === 0 ? (
+          <div className="text-center text-slate-500">
+            Одоогоор хамтрагч байгууллага алга байна.
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* 1-р мөр */}
+            <Marquee pauseOnHover className="[--duration:16s]">
+              {partners.map((p, idx) => (
+                <ReviewCard
+                  key={`${p._id}-${idx}`}
+                  name={p.name}
+                  image={p.image}
+                />
+              ))}
+            </Marquee>
+          </div>
+        )}
       </div>
     </section>
   );

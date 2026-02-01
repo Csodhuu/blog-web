@@ -16,35 +16,31 @@ const contactDetails = [
   {
     icon: MapPin,
     label: "Төв оффис",
-    value: "Unit 1204, Gateway Tower, Ortigas Center, Pasig City, Philippines",
+    value:
+      "#1705, 17 Давхар, Peace mall, 3-р хороо, Чингэлтэй дүүрэг, Улаанбаатар",
   },
   {
     icon: Phone,
     label: "Утас",
-    value: "+63 2 8891 5560",
+    value: "(+976) 99008515, (+976) 99121892",
   },
   {
     icon: Mail,
     label: "Имэйл",
-    value: "hello@gatewaysportstravel.com",
+    value: "gatewaycapability@gmail.com",
   },
 ];
 
 const socials = [
   {
     label: "Facebook",
-    href: "https://facebook.com/gatewaysportstravel",
+    href: "https://www.facebook.com/profile.php?id=100076482181492",
     icon: Facebook,
   },
   {
     label: "Instagram",
-    href: "https://instagram.com/gatewaysportstravel",
+    href: "https://www.instagram.com/gatewaycmongolia/",
     icon: Instagram,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://linkedin.com/company/gatewaysportstravel",
-    icon: Linkedin,
   },
 ];
 
@@ -193,6 +189,7 @@ export default function ContactPage() {
               <div className="flex flex-wrap gap-3">
                 {socials.map((social) => (
                   <a
+                    target="_blank"
                     key={social.label}
                     href={social.href}
                     className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary/50 hover:text-primary"

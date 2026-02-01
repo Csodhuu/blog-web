@@ -3,7 +3,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="bg-slate-900 text-slate-200">
+    <footer className="bg-slate-900 text-slate-200 z-10 ">
       {/* Top gradient line */}
       <div className="h-1 bg-gradient-to-r from-red-500 via-pink-500 to-indigo-500" />
 
