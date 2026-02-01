@@ -1,4 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { BASEURL } from "@/lib/authClient";
+import { Download } from "lucide-react";
+import Image from "next/image";
 
 export const revalidate = 0;
 
@@ -134,28 +138,56 @@ function createEventKey(event: Competition, index: number) {
   const dateLabel = event.date ? event.date.toISOString() : `no-date-${index}`;
   return `${event.title}-${dateLabel}`;
 }
+function formatDateRange(date: Date | null) {
+  if (!date) return "Огноо тодорхойгүй";
+  return date.toLocaleDateString("en-CA");
+}
 
-function EventCard({ event }: { event: Competition }) {
+function EventCard({ item }: { item: Competition }) {
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-      <div
-        className="h-44 w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${event.image})` }}
-        aria-label={`${event.title} зургийн төсөө`}
-      />
-      <div className="flex flex-1 flex-col gap-3 p-6">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-primary/80">
-          <span>{event.sport}</span>
-          <span>{formatDisplayDate(event.date)}</span>
+    <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-0">
+      {/* LEFT CONTENT */}
+      <div className="flex flex-col justify-between p-10">
+        <div className="space-y-6">
+          <h2 className="text-3xl font-bold text-slate-900">{item.title}</h2>
+
+          <div className="space-y-3 text-lg text-slate-700">
+            <p>
+              <span className="font-semibold">Ангилал:</span> {item.sport}
+            </p>
+
+            <p>
+              <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+              {formatDateRange(item.date)}
+            </p>
+
+            <p>
+              <span className="font-semibold">Байршил:</span> {item.location}
+            </p>
+          </div>
+
+          <p className="max-w-md text-slate-600">{item.description}</p>
         </div>
-        <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
-        <p className="text-sm font-medium text-slate-500">{event.location}</p>
-        <p className="text-sm text-slate-600">{event.description}</p>
-        {/* <div className="mt-auto pt-4 text-sm font-semibold text-primary">
-          Хүсэлт илгээх
-        </div> */}
+
+        {/* BUTTON */}
+        <div className="mt-10">
+          <Button className=" px-8 py-6 text-base">
+            Танилцуулга татах <Download />
+          </Button>
+        </div>
       </div>
-    </div>
+
+      {/* RIGHT IMAGE */}
+      <div className="relative min-h-[320px] bg-slate-200">
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+    </Card>
   );
 }
 
@@ -219,9 +251,9 @@ export default async function CompetitionsPage() {
               </h2>
             </div>
             {upcomingEvents.length > 0 ? (
-              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8">
                 {upcomingEvents.map((event, index) => (
-                  <EventCard key={createEventKey(event, index)} event={event} />
+                  <EventCard key={createEventKey(event, index)} item={event} />
                 ))}
               </div>
             ) : (
@@ -249,9 +281,9 @@ export default async function CompetitionsPage() {
               </p>
             </div>
             {pastEvents.length > 0 ? (
-              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8">
                 {pastEvents.map((event, index) => (
-                  <EventCard key={createEventKey(event, index)} event={event} />
+                  <EventCard key={createEventKey(event, index)} item={event} />
                 ))}
               </div>
             ) : (

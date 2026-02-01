@@ -1,169 +1,248 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Target, Zap, Award, Crown } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { BASEURL } from "@/lib/authClient";
+import { Button } from "../ui/button";
+import Image from "next/image";
+import { Download } from "lucide-react";
 
-const cardData = [
-  {
-    id: 1,
-    title: "Championship League",
-    description:
-      "Join the ultimate competition and prove your skills against the best players worldwide.",
-    icon: Trophy,
-    badge: "Featured",
-    status: "active",
-  },
-  {
-    id: 2,
-    title: "Skills Challenge",
-    description:
-      "Test your abilities in various skill-based challenges and earn exclusive rewards.",
-    icon: Target,
-    badge: "New",
-    status: "upcoming",
-  },
-  {
-    id: 3,
-    title: "Speed Tournament",
-    description:
-      "Fast-paced matches where quick thinking and rapid execution determine the winner.",
-    icon: Zap,
-    badge: "Popular",
-    status: "active",
-  },
-  {
-    id: 4,
-    title: "Elite Masters",
-    description:
-      "Exclusive tournament for top-tier players seeking the ultimate challenge.",
-    icon: Crown,
-    badge: "Elite",
-    status: "invitation",
-  },
-  {
-    id: 5,
-    title: "Rising Stars",
-    description:
-      "Perfect for newcomers to showcase their potential and climb the rankings.",
-    icon: Star,
-    badge: "Beginner",
-    status: "active",
-  },
-  {
-    id: 6,
-    title: "Achievement Hunt",
-    description:
-      "Complete various objectives and unlock special achievements and titles.",
-    icon: Award,
-    badge: "Quest",
-    status: "ongoing",
-  },
-];
+export const revalidate = 0;
 
-const getBadgeVariant = (badge: string) => {
-  switch (badge) {
-    case "Featured":
-      return "default";
-    case "New":
-      return "secondary";
-    case "Popular":
-      return "outline";
-    case "Elite":
-      return "destructive";
-    case "Beginner":
-      return "secondary";
-    case "Quest":
-      return "outline";
-    default:
-      return "default";
-  }
+type ApiCompetitionType =
+  | "upcomingEvents"
+  | "pastEvents"
+  | { type?: "upcomingEvents" | "pastEvents" | null }
+  | null
+  | undefined;
+
+type ApiCompetition = {
+  _id?: string;
+  id?: string;
+  title?: string;
+  sport?: string;
+  date?: string | Date | null;
+  location?: string;
+  description?: string;
+  image?: string;
+  type?: ApiCompetitionType;
 };
 
-export function Competitions() {
+type Competition = {
+  id?: string;
+  title: string;
+  sport: string;
+  date: Date | null;
+  location: string;
+  description: string;
+  image: string;
+  category: "upcomingEvents" | "pastEvents";
+};
+
+type CompetitionGroups = {
+  upcoming: Competition[];
+  past: Competition[];
+};
+
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80";
+
+const FALLBACK_TITLE = "Тэмцээний нэр тодорхойгүй";
+const FALLBACK_SPORT = "Спорт төрөл тодорхойгүй";
+const FALLBACK_LOCATION = "Байршил тодорхойгүй";
+const FALLBACK_DESCRIPTION = "Тайлбар бэлэн болоход шинэчлэгдэнэ.";
+
+function parseDate(value: ApiCompetition["date"]): Date | null {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getCompetitionCategory(value: ApiCompetitionType) {
+  if (!value) return null;
+
+  if (typeof value === "string") {
+    return value === "upcomingEvents" || value === "pastEvents" ? value : null;
+  }
+
+  const nested = value.type;
+  return nested === "upcomingEvents" || nested === "pastEvents" ? nested : null;
+}
+
+function normalizeCompetitions(data: unknown): Competition[] {
+  const list = Array.isArray(data) ? data : data ? [data] : [];
+  return list
+    .map((entry) => {
+      if (typeof entry !== "object" || entry === null) return null;
+
+      const item = entry as ApiCompetition;
+      const category = getCompetitionCategory(item.type);
+
+      if (!category) return null;
+
+      return {
+        id: item._id ?? item.id,
+        title: item.title?.trim() || FALLBACK_TITLE,
+        sport: item.sport?.trim() || FALLBACK_SPORT,
+        date: parseDate(item.date),
+        location: item.location?.trim() || FALLBACK_LOCATION,
+        description: item.description?.trim() || FALLBACK_DESCRIPTION,
+        image: item.image?.trim() || DEFAULT_IMAGE,
+        category,
+      } as Competition;
+    })
+    .filter((competition): competition is Competition => competition !== null);
+}
+
+async function fetchCompetitions(): Promise<CompetitionGroups> {
+  const url = `${BASEURL}/competitions`;
+  const response = await fetch(url, { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error(
+      `Тэмцээний мэдээлэл авахад алдаа гарлаа (${response.status})`
+    );
+  }
+
+  const json = await response.json();
+  const competitions = normalizeCompetitions(json);
+
+  const upcoming = competitions
+    .filter((competition) => competition.category === "upcomingEvents")
+    .sort((a, b) => {
+      const timeA = a.date ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
+      const timeB = b.date ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
+      return timeA - timeB;
+    });
+
+  const past = competitions
+    .filter((competition) => competition.category === "pastEvents")
+    .sort((a, b) => {
+      const timeA = a.date ? a.date.getTime() : Number.MIN_SAFE_INTEGER;
+      const timeB = b.date ? b.date.getTime() : Number.MIN_SAFE_INTEGER;
+      return timeB - timeA;
+    });
+
+  return { upcoming, past };
+}
+
+function createEventKey(event: Competition, index: number) {
+  if (event.id) return event.id;
+  const dateLabel = event.date ? event.date.toISOString() : `no-date-${index}`;
+  return `${event.title}-${dateLabel}`;
+}
+
+function formatDateRange(date: Date | null) {
+  if (!date) return "Огноо тодорхойгүй";
+  return date.toLocaleDateString("en-CA");
+}
+function CompetitionCard({ item }: { item: Competition }) {
+  console.log(item.image);
+  return (
+    <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-0">
+      {/* LEFT CONTENT */}
+      <div className="flex flex-col justify-between p-10">
+        <div className="space-y-6">
+          <h2 className="text-3xl font-bold text-slate-900">{item.title}</h2>
+
+          <div className="space-y-3 text-lg text-slate-700">
+            <p>
+              <span className="font-semibold">Ангилал:</span> {item.sport}
+            </p>
+
+            <p>
+              <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+              {formatDateRange(item.date)}
+            </p>
+
+            <p>
+              <span className="font-semibold">Байршил:</span> {item.location}
+            </p>
+          </div>
+
+          <p className="max-w-md text-slate-600">{item.description}</p>
+        </div>
+
+        {/* BUTTON */}
+        <div className="mt-10">
+          <Button className=" px-8 py-6 text-base">
+            Танилцуулга татах <Download />
+          </Button>
+        </div>
+      </div>
+
+      {/* RIGHT IMAGE */}
+      <div className="relative min-h-[320px] bg-slate-200">
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+    </Card>
+  );
+}
+
+export async function Competitions() {
+  let items: Competition[] = [];
+  let error: string | null = null;
+
+  try {
+    const { upcoming, past } = await fetchCompetitions();
+    items = [...upcoming, ...past];
+  } catch (err) {
+    error =
+      err instanceof Error
+        ? err.message
+        : "Тэмцээний мэдээллийг авах явцад үл мэдэгдэх алдаа гарлаа.";
+  }
+
   return (
     <section className="relative overflow-hidden">
-      <div className="container mx-auto px-4  max-w-6xl  py-20 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-card-foreground mb-4 text-balance">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-balance text-4xl font-bold text-card-foreground md:text-5xl">
             Тэмцээнүүд
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+          <p className="mx-auto max-w-2xl text-pretty text-lg text-muted-foreground">
             Ур чадвараа шалгаж, өөрийнхөө хязгаарыг даван туулахад зориулагдсан
             сонирхолтой тэмцээн, сорилтууд таныг хүлээж байна.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cardData.map((card) => {
-            const IconComponent = card.icon;
-            return (
-              <Card
-                key={card.id}
-                className="group relative overflow-hidden bg-card border-border hover:bg-muted transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
-              >
-                <div className="absolute top-4 right-4 z-10">
-                  <Badge
-                    variant={getBadgeVariant(card.badge)}
-                    className="text-xs font-medium"
-                  >
-                    {card.badge}
-                  </Badge>
-                </div>
+        {/* Error */}
+        {error ? (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
 
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 rounded-lg bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
-                      <IconComponent className="h-6 w-6" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl font-bold text-card-foreground group-hover:text-foreground transition-colors duration-300">
-                    {card.title}
-                  </CardTitle>
-                </CardHeader>
-
-                {/* Image Placeholder */}
-                <div className="mx-6 mb-4 h-32 bg-muted rounded-lg overflow-hidden">
-                  <img
-                    src={`https://www.finaltouch.co.in/abstract-geometric-shapes.webp`}
-                    alt={`${card.title} banner`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-
-                {/* Card Content */}
-                <CardContent className="pt-0">
-                  <CardDescription className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                    {card.description}
-                  </CardDescription>
-
-                  <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors duration-300"
-                    size="sm"
-                  >
-                    {card.status === "active"
-                      ? "Join Now"
-                      : card.status === "upcoming"
-                      ? "Register"
-                      : card.status === "invitation"
-                      ? "Request Invite"
-                      : "View Details"}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {/* Grid */}
+        {!error ? (
+          <div>
+            {items.length > 0 ? (
+              items.map((item, index) => (
+                <CompetitionCard
+                  key={createEventKey(item, index)}
+                  item={item}
+                />
+              ))
+            ) : (
+              <p className="text-sm text-slate-600">
+                Одоогоор тэмцээний мэдээлэл байхгүй байна.
+              </p>
+            )}
+          </div>
+        ) : null}
 
         {/* Footer */}
-        <div className="text-center mt-16">
+        <div className="mt-16 text-center">
           <p className="text-muted-foreground">
             Ирээдүйд олон тэмцээнүүд зохиогдох болно. Сонирхолтой мэдээллүүдэд
             анхаарлаа хандуулаарай !

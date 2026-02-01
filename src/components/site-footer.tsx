@@ -1,92 +1,96 @@
 import Link from "next/link";
-
-const footerLinks = [
-  {
-    title: "Хөтөлбөрүүд",
-    links: [
-      { label: "Аялал", href: "/travel" },
-      { label: "Тэмцээнүүд", href: "/competitions" },
-      { label: "Кэмп сургалт", href: "/camps" },
-      { label: "Зургийн цомог", href: "/album" },
-    ],
-  },
-  {
-    title: "Компани",
-    links: [
-      { label: "Бидний тухай", href: "/about" },
-      { label: "Холбоо барих", href: "/contact" },
-      { label: "Өмнөх арга хэмжээнүүд", href: "/past-events" },
-    ],
-  },
-];
+import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/20 bg-slate-900 text-slate-200">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-        {/* Танилцуулга хэсэг */}
-        <div className="space-y-3">
-          <p className="text-lg font-semibold text-white">
-            Gateway Sports Travel
-          </p>
-          <p className="text-sm text-slate-400">
-            Тамирчдын клуб, холбоодод зориулсан аялал, тэмцээн, соёлын иж бүрэн
-            туршлага — Ази болон дэлхийн түвшинд.
-          </p>
+    <footer className="bg-slate-900 text-slate-200">
+      {/* Top gradient line */}
+      <div className="h-1 bg-gradient-to-r from-red-500 via-pink-500 to-indigo-500" />
+
+      {/* Main footer */}
+      <div className="max-w-7xl mx-auto px-6 py-2 text-center">
+        {/* Logo */}
+        <div className="flex flex-col items-center gap-4">
+          <img src="/logo.png" alt="Gateway Sports" className="w-20 h-20" />
+          <h2 className="text-xl font-semibold tracking-wide">
+            GATEWAY SPORTS <br />
+            TRAVEL MANAGEMENT
+          </h2>
         </div>
 
-        {/* Линкүүд */}
-        {footerLinks.map((section) => (
-          <div key={section.title} className="space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-              {section.title}
-            </p>
-            <ul className="space-y-2 text-sm">
-              {section.links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-400 transition hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {/* Navigation */}
+        <nav className="mt-10 flex flex-wrap justify-center gap-6 text-sm font-medium tracking-wide">
+          <Link href="/about" className="hover:text-white">
+            БИДНИЙ ТУХАЙ
+          </Link>
+          <span className="opacity-40">|</span>
 
-        {/* Newsletter */}
-        <div className="space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-            Мэдээллийн товхимол
-          </p>
-          <p className="text-sm text-slate-400">
-            Аяллын цонх, тэмцээний урилга, кэмпийн хөтөлбөрийн шинэчлэлтүүдийг
-            имэйлээрээ шууд хүлээн аваарай.
-          </p>
-          <form className="flex flex-col gap-2 sm:flex-row">
-            <input
-              type="email"
-              placeholder="tanid@example.com"
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow hover:bg-primary/90"
+          <Link href="/competitions" className="hover:text-white">
+            ТЭМЦЭЭНҮҮД
+          </Link>
+          <span className="opacity-40">|</span>
+
+          <Link href="/travel" className="hover:text-white">
+            АЯЛАЛ
+          </Link>
+          <span className="opacity-40">|</span>
+
+          <Link href="/album" className="hover:text-white">
+            ЗУРГИЙН ЦОМОГ
+          </Link>
+          <span className="opacity-40">|</span>
+
+          <Link href="/camps" className="hover:text-white">
+            CAMP TRAINING
+          </Link>
+          <span className="opacity-40">|</span>
+
+          <Link href="/contact" className="hover:text-white">
+            ХОЛБОО БАРИХ
+          </Link>
+        </nav>
+      </div>
+
+      {/* Contact bar */}
+      <div className="bg-slate-700/60">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+          <div className="space-y-1 text-center md:text-left">
+            <p>
+              <span className="font-semibold">Хаяг Байршил:</span> #1705, 17
+              Давхар, Peace mall, 3-р хороо, Чингэлтэй дүүрэг, Улаанбаатар
+            </p>
+            <p>
+              <span className="font-semibold">Цахим шуудан:</span>{" "}
+              Gatewaycapability@gmail.com
+              <span className="ml-6 font-semibold">Утас:</span> 9900-8515,
+              9912-1892
+            </p>
+          </div>
+
+          {/* Social icons */}
+          <div className="flex items-center gap-4">
+            <a
+              href={"https://www.instagram.com/gatewaycmongolia/"}
+              target="_blank"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-400 transition"
             >
-              Бүртгүүлэх
-            </button>
-          </form>
+              <Instagram className="w-5 h-5 text-white" />
+            </a>
+            <a
+              href={"https://www.facebook.com/profile.php?id=100076482181492"}
+              target="_blank"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-400 transition"
+            >
+              <Facebook className="w-5 h-5 text-white" />
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Доод хэсэг */}
-      <div className="border-t border-slate-800 bg-slate-950 py-4">
-        <p className="mx-auto max-w-6xl px-4 text-xs text-slate-500 sm:px-6 lg:px-8">
-          © {new Date().getFullYear()} Gateway Sports Travel. Бүх эрх хуулиар
-          хамгаалагдсан.
-        </p>
+      {/* Copyright */}
+      <div className="bg-slate-900 py-4 text-center text-xs text-slate-400">
+        Copyright © 2026 Gateway Sports & Travel Management. All Rights
+        Reserved.
       </div>
     </footer>
   );

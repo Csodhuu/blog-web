@@ -13,7 +13,7 @@ export function ClubCard() {
           <Card className=" bg-white rounded-none p-0 rounded-bl-[60px]">
             <div className="relative w-full h-[216px]">
               <Image
-                src="/images/image1.jpg"
+                src="/images/image2.jpg"
                 alt="club"
                 fill
                 className="object-cover"
@@ -27,7 +27,7 @@ export function ClubCard() {
           <Card className=" bg-white rounded-none p-0 rounded-bl-[60px]">
             <div className="relative w-full h-[216px]">
               <Image
-                src="/images/image2.jpg"
+                src="/images/image1.jpg"
                 alt="club"
                 fill
                 className="object-cover"

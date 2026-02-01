@@ -1,6 +1,8 @@
 "use client";
+import { Card } from "@/components/ui/card";
 import { BASEURL } from "@/lib/authClient";
 import { useEffect, useState } from "react";
+import { employees } from "./dummy";
 
 type AboutTimelineItem = {
   year: string;
@@ -41,8 +43,7 @@ export default function AboutPage() {
         const normalized = Array.isArray(json) ? json[0] ?? null : json ?? null;
         setData(normalized);
       } catch (error: unknown) {
-        const message =
-          error instanceof Error ? error.message : "Алдаа гарлаа";
+        const message = error instanceof Error ? error.message : "Алдаа гарлаа";
         setError(message);
         setData(null);
       } finally {
@@ -101,18 +102,28 @@ export default function AboutPage() {
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
       {/* --- Бидний тухай --- */}
+
       <section className="border-b border-slate-200 bg-white/80">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div
+            className="border border-slate-200 bg-cover bg-center shadow-inner"
+            style={{
+              minHeight: 453,
+              backgroundImage: paragraphImage
+                ? `url('${paragraphImage}')`
+                : "url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=900&q=80')",
+            }}
+            aria-hidden
+          />
+        </div>
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Бидний тухай
-          </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
             {title || "Gateway Sports Travel"}
           </h1>
 
           {/* content (товч танилцуулга) */}
           {content ? (
-            <p className="mt-4 max-w-3xl text-slate-700">{content}</p>
+            <p className="mt-4 max-w-full text-slate-700 ">{content}</p>
           ) : null}
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
@@ -121,17 +132,47 @@ export default function AboutPage() {
                 <p key={i}>{p}</p>
               ))}
             </div>
+          </div>
 
-            <div
-              className="rounded-3xl border border-slate-200 bg-cover bg-center shadow-inner"
-              style={{
-                minHeight: 280,
-                backgroundImage: paragraphImage
-                  ? `url('${paragraphImage}')`
-                  : "url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=900&q=80')",
-              }}
-              aria-hidden
-            />
+          <div>
+            <p className="text-[25px]">Захирал</p>
+            <div className="my-[18px] flex gap-4 ">
+              <Card className="w-[159px] h-[159px] p-0">
+                <img
+                  src={"employee/ceo.jpg"}
+                  // alt={e.name}
+                  className="w-full h-full object-cover"
+                />
+              </Card>
+              <div className="flex flex-col justify-center gap-2">
+                <p>Үүсгэн байгуулагч</p>
+                <p className="text-[28px] font-bold">Ө.Баасандорж</p>
+                <p>
+                  Gateway Sports Travel нь спорт аялал жуулчлалын чиглэлээр
+                  мэргэшсэн бөгөөд бидний зорилго нь үйлчлүүлэгчдэдээ хамгийн
+                  сайн үйлчилгээ үзүүлэх явдал юм.
+                </p>
+              </div>
+            </div>
+            <p className="text-[25px]">Менежерүүд</p>
+            <div className="grid grid-cols-4 my-[18px] gap-4">
+              {employees.map((e, i) => (
+                <div key={i} className="w-[159px]">
+                  <Card className="w-[159px] h-[159px] p-0 overflow-hidden rounded-xl">
+                    <img
+                      src={e.imgSrc}
+                      alt={e.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </Card>
+
+                  <p className="mt-2 font-bold text-center">{e.name}</p>
+                  <p className="text-[14px] text-center text-muted-foreground">
+                    {e.position}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

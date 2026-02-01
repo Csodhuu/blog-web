@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --font-roboto-condensed: "Roboto Condensed", sans-serif;
   /* Updated to premium emerald-based color palette with glassmorphism support */
   --background: #ffffff;
   --foreground: #475569;
@@ -80,7 +81,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-roboto-condensed);
   --font-mono: var(--font-geist-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
