@@ -128,11 +128,6 @@ async function fetchCompetitions(): Promise<CompetitionGroups> {
   return { upcoming, past };
 }
 
-function formatDisplayDate(date: Date | null) {
-  if (!date) return "Огноо тодорхойгүй";
-  return date.toLocaleDateString("en-CA");
-}
-
 function createEventKey(event: Competition, index: number) {
   if (event.id) return event.id;
   const dateLabel = event.date ? event.date.toISOString() : `no-date-${index}`;

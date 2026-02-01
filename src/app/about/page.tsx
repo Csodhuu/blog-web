@@ -136,7 +136,7 @@ export default function AboutPage() {
 
           <div>
             <p className="text-[25px]">Захирал</p>
-            <div className="my-[18px] flex gap-4 ">
+            <div className="my-[18px] lg:flex gap-4 ">
               <Card className="w-[159px] h-[159px] p-0">
                 <img
                   src={"employee/ceo.jpg"}
@@ -155,7 +155,7 @@ export default function AboutPage() {
               </div>
             </div>
             <p className="text-[25px]">Менежерүүд</p>
-            <div className="grid grid-cols-4 my-[18px] gap-4">
+            <div className="grid grid-cols-2  lg:grid-cols-4 my-[18px] gap-4">
               {employees.map((e, i) => (
                 <div key={i} className="w-[159px]">
                   <Card className="w-[159px] h-[159px] p-0 overflow-hidden rounded-xl">
