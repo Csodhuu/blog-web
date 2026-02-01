@@ -34,14 +34,6 @@ function ReviewCard({ image, name }: { image: string; name: string }) {
           (e.currentTarget as HTMLImageElement).src = FALLBACK_LOGO;
         }}
       />
-
-      <div className="absolute inset-x-0 bottom-0 p-3">
-        <div className="rounded-xl bg-black/45 backdrop-blur px-3 py-2">
-          <p className="text-white text-sm font-semibold line-clamp-1">
-            {name}
-          </p>
-        </div>
-      </div>
     </figure>
   );
 }
