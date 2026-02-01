@@ -44,29 +44,6 @@ const socials = [
   },
 ];
 
-const adminContacts = [
-  {
-    role: "Тэмцээний захирал",
-    name: "Miguel Santos",
-    email: "competitions@gatewaysportstravel.com",
-  },
-  {
-    role: "Аяллын үйл ажиллагаа",
-    name: "Aya Nakamura",
-    email: "travel@gatewaysportstravel.com",
-  },
-  {
-    role: "Кэмп хөтөлбөрүүд",
-    name: "Ravi Kumar",
-    email: "camps@gatewaysportstravel.com",
-  },
-  {
-    role: "Медиа ба цомгууд",
-    name: "Tara Villanueva",
-    email: "albums@gatewaysportstravel.com",
-  },
-];
-
 export default function ContactPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -269,25 +246,6 @@ export default function ContactPage() {
                 </div>
               ) : null}
             </form>
-
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-                Админ холбогдох хүмүүс
-              </p>
-              <div className="mt-4 grid gap-4">
-                {adminContacts.map((contact) => (
-                  <div key={contact.email}>
-                    <p className="text-sm font-semibold text-slate-900">
-                      {contact.role}
-                    </p>
-                    <p className="text-sm text-slate-600">{contact.name}</p>
-                    <p className="text-sm font-medium text-primary">
-                      {contact.email}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>
