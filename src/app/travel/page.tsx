@@ -1,6 +1,7 @@
 import { BASEURL } from "@/lib/authClient";
 
-export const revalidate = 0;
+export const revalidate = 60;
+export const dynamic = "force-static";
 
 type ApiTravelProgram = {
   _id?: string;
@@ -62,7 +63,7 @@ function normalizePrograms(data: unknown): TravelProgram[] {
 
 async function fetchTravelPrograms(): Promise<TravelProgram[]> {
   const url = `${BASEURL}/travel`;
-  const response = await fetch(url, { cache: "no-store" });
+  const response = await fetch(url, { next: { revalidate } });
 
   if (!response.ok) {
     throw new Error(

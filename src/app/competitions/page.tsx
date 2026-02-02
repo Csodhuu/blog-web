@@ -4,7 +4,8 @@ import { BASEURL } from "@/lib/authClient";
 import { Download } from "lucide-react";
 import Image from "next/image";
 
-export const revalidate = 0;
+export const revalidate = 60;
+export const dynamic = "force-static";
 
 type ApiCompetitionType =
   | "upcomingEvents"
@@ -98,7 +99,7 @@ function normalizeCompetitions(data: unknown): Competition[] {
 
 async function fetchCompetitions(): Promise<CompetitionGroups> {
   const url = `${BASEURL}/competitions`;
-  const response = await fetch(url, { cache: "no-store" });
+  const response = await fetch(url, { next: { revalidate } });
 
   if (!response.ok) {
     throw new Error(
