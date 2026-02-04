@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 
 type AlbumApiAlbum = {
   _id?: string;
@@ -207,7 +207,9 @@ export default function AlbumPage() {
                         >
                           <div
                             className="h-44 w-full bg-cover bg-center"
-                            style={{ backgroundImage: `url(${album.cover})` }}
+                            style={{
+                              backgroundImage: `url(${imageUrl + album.cover})`,
+                            }}
                             aria-label={
                               album.name
                                 ? `${album.name} цомгийн зураг`

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Card } from "@/components/ui/card";
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { Download } from "lucide-react";
@@ -182,64 +182,52 @@ function CompetitionCard({ item }: { item: Competition }) {
   const canDownload = Boolean(item.link);
 
   return (
-    <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-0">
-      {/* LEFT CONTENT */}
-      <div className="flex flex-col justify-between p-10">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-slate-900">{item.title}</h2>
+    <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        {/* LEFT CONTENT */}
+        <div className="flex flex-col justify-between p-8 md:p-10">
+          <div className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+              {item.title}
+            </h2>
 
-          <div className="space-y-3 text-lg text-slate-700">
-            <p>
-              <span className="font-semibold">Ангилал:</span> {item.sport}
-            </p>
+            <div className="space-y-2 text-base text-slate-700">
+              <p>
+                <span className="font-semibold">Ангилал:</span> {item.sport}
+              </p>
+              <p>
+                <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+                {formatDateRange(item.date)}
+              </p>
+              <p>
+                <span className="font-semibold">Байршил:</span> {item.location}
+              </p>
+            </div>
 
-            <p>
-              <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
-              {formatDateRange(item.date)}
-            </p>
-
-            <p>
-              <span className="font-semibold">Байршил:</span> {item.location}
+            <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
+              {item.description}
             </p>
           </div>
 
-          <p className="max-w-md text-slate-600">{item.description}</p>
-        </div>
-
-        {/* BUTTON */}
-        <div className="mt-10">
-          {canDownload ? (
-            <Link href={item.link!} target="_blank" rel="noreferrer">
-              <Button className="px-8 py-6 text-base">
-                Танилцуулга татах <Download className="ml-2" />
+          <div className="mt-8">
+            <Link href={item.link || ""} target="_blank">
+              <Button className="gap-2 px-6 py-5 text-sm md:text-base">
+                Танилцуулга татах <Download className="h-4 w-4" />
               </Button>
             </Link>
-          ) : (
-            <Button className="px-8 py-6 text-base" disabled>
-              Танилцуулга байхгүй <Download className="ml-2" />
-            </Button>
-          )}
+          </div>
         </div>
-      </div>
 
-      {/* RIGHT IMAGE */}
-      <div className="relative min-h-[320px] bg-slate-200">
-        {isSafeNextImageSrc(item.image) ? (
+        {/* RIGHT IMAGE */}
+        <div className="relative h-[260px] md:h-full">
           <Image
-            src={item.image}
+            src={imageUrl + item.image}
             alt={item.title}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
-            priority
           />
-        ) : (
-          // ✅ remote зураг орж ирвэл next/image hostname error-оос хамгаалаад img ашиглана
-          <img
-            src={item.image}
-            alt={item.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
+        </div>
       </div>
     </Card>
   );

@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 import { useEffect, useState } from "react";
 import { employees } from "./dummy";
 
@@ -110,7 +110,7 @@ export default function AboutPage() {
             style={{
               minHeight: 453,
               backgroundImage: paragraphImage
-                ? `url('${paragraphImage}')`
+                ? `url('${imageUrl + paragraphImage}')`
                 : "url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=900&q=80')",
             }}
             aria-hidden
