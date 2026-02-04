@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 import { Download } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const revalidate = 60;
 export const dynamic = "force-static";
@@ -27,6 +28,7 @@ type ApiCompetition = {
 };
 
 type Competition = {
+  link: string;
   id?: string;
   title: string;
   sport: string;
@@ -141,47 +143,52 @@ function formatDateRange(date: Date | null) {
 
 function EventCard({ item }: { item: Competition }) {
   return (
-    <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-0">
-      {/* LEFT CONTENT */}
-      <div className="flex flex-col justify-between p-10">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-slate-900">{item.title}</h2>
+    <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        {/* LEFT CONTENT */}
+        <div className="flex flex-col justify-between p-8 md:p-10">
+          <div className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+              {item.title}
+            </h2>
 
-          <div className="space-y-3 text-lg text-slate-700">
-            <p>
-              <span className="font-semibold">Ангилал:</span> {item.sport}
-            </p>
+            <div className="space-y-2 text-base text-slate-700">
+              <p>
+                <span className="font-semibold">Ангилал:</span> {item.sport}
+              </p>
+              <p>
+                <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+                {formatDateRange(item.date)}
+              </p>
+              <p>
+                <span className="font-semibold">Байршил:</span> {item.location}
+              </p>
+            </div>
 
-            <p>
-              <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
-              {formatDateRange(item.date)}
-            </p>
-
-            <p>
-              <span className="font-semibold">Байршил:</span> {item.location}
+            <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
+              {item.description}
             </p>
           </div>
 
-          <p className="max-w-md text-slate-600">{item.description}</p>
+          <div className="mt-8">
+            <Link href={item.link || ""} target="_blank">
+              <Button className="gap-2 px-6 py-5 text-sm md:text-base">
+                Танилцуулга татах <Download className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* BUTTON */}
-        <div className="mt-10">
-          <Button className=" px-8 py-6 text-base">
-            Танилцуулга татах <Download />
-          </Button>
+        {/* RIGHT IMAGE */}
+        <div className="relative h-[260px] md:h-full">
+          <Image
+            src={imageUrl + item.image}
+            alt={item.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
         </div>
-      </div>
-
-      {/* RIGHT IMAGE */}
-      <div className="relative min-h-[320px] bg-slate-200">
-        <Image
-          src={item.image}
-          alt={item.title}
-          fill
-          className="object-cover"
-          priority
-        />
       </div>
     </Card>
   );
@@ -247,7 +254,7 @@ export default async function CompetitionsPage() {
               </h2>
             </div>
             {upcomingEvents.length > 0 ? (
-              <div className="mt-8">
+              <div className="mt-8 space-y-8">
                 {upcomingEvents.map((event, index) => (
                   <EventCard key={createEventKey(event, index)} item={event} />
                 ))}
@@ -277,8 +284,8 @@ export default async function CompetitionsPage() {
               </p>
             </div>
             {pastEvents.length > 0 ? (
-              <div className="mt-8">
-                {pastEvents.map((event, index) => (
+              <div className="mt-8 space-y-8">
+                {upcomingEvents.map((event, index) => (
                   <EventCard key={createEventKey(event, index)} item={event} />
                 ))}
               </div>

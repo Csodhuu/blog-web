@@ -1,6 +1,6 @@
 "use client";
 
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 import { useEffect, useState } from "react";
 
 type Camp = {
@@ -102,6 +102,19 @@ export default function CampsPage() {
     );
   }
 
+  function formatDate(value?: string | Date | null) {
+    if (!value) return "Огноо тодорхойгүй";
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return "Огноо тодорхойгүй";
+
+    return date.toLocaleDateString("mn-MN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
       {/* --- Толгой хэсэг --- */}
@@ -133,25 +146,27 @@ export default function CampsPage() {
                 <div
                   className="h-44 w-full bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${camp.image || FALLBACK_IMAGE})`,
+                    backgroundImage: `url(${
+                      imageUrl + camp.image || FALLBACK_IMAGE
+                    })`,
                   }}
                   aria-label={`${camp.title} кэмпийн зураг`}
                 />
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-primary/80">
                     <span>{camp.sport}</span>
-                    <span>{camp.date}</span>
+                    <span>{formatDate(camp.date)}</span>
                   </div>
+
                   <h3 className="text-lg font-semibold text-slate-900">
                     {camp.title}
                   </h3>
                   <p className="text-sm font-medium text-slate-500">
                     {camp.location}
                   </p>
-                  <p className="text-sm text-slate-600">{camp.description}</p>
-                  <div className="mt-auto pt-4 text-sm font-semibold text-primary">
-                    Кэмпийн танилцуулга авах
-                  </div>
+                  <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
+                    {camp.description}
+                  </p>
                 </div>
               </div>
             ))}

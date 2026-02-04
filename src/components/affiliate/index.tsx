@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Marquee } from "../ui/marquee";
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 
 type PartnerEntity = {
   _id: string;
@@ -28,7 +28,7 @@ function ReviewCard({ image, name }: { image: string; name: string }) {
       <img
         alt={name}
         className="absolute inset-0 h-full w-full object-cover"
-        src={image || FALLBACK_LOGO}
+        src={imageUrl + image || FALLBACK_LOGO}
         loading="lazy"
         onError={(e) => {
           (e.currentTarget as HTMLImageElement).src = FALLBACK_LOGO;

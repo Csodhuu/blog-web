@@ -1,4 +1,4 @@
-import { BASEURL } from "@/lib/authClient";
+import { BASEURL, imageUrl } from "@/lib/authClient";
 
 export const revalidate = 60;
 export const dynamic = "force-static";
@@ -151,7 +151,9 @@ export default async function TravelPage() {
                 >
                   <div
                     className="h-48 w-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${program.image})` }}
+                    style={{
+                      backgroundImage: `url(${imageUrl + program.image})`,
+                    }}
                     aria-label={`${program.destination} аяллын зураг`}
                   />
                   <div className="flex flex-1 flex-col gap-3 p-6">
