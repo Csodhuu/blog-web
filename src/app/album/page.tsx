@@ -1,8 +1,16 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
 import { BASEURL, imageUrl } from "@/lib/authClient";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 type AlbumApiAlbum = {
   _id?: string;
@@ -47,7 +55,6 @@ const parseDate = (
   if (!value) return null;
   if (value instanceof Date)
     return Number.isNaN(value.getTime()) ? null : value;
-
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 };
@@ -58,10 +65,28 @@ const formatAlbumDate = (date: Date | null) => {
   return `${date.getFullYear()} оны ${month}-р сар`;
 };
 
+function resolveCover(cover: string) {
+  if (!cover) return DEFAULT_COVER;
+  if (cover.startsWith("http://") || cover.startsWith("https://")) return cover;
+  // backend-аас "/uploads/..." гэх мэт ирвэл prefix нэмнэ
+  return `${imageUrl}${cover}`;
+}
+
 export default function AlbumPage() {
   const [collections, setCollections] = useState<AlbumCollection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // --- Lightbox state ---
+  const [open, setOpen] = useState(false);
+  const [flatAlbums, setFlatAlbums] = useState<
+    Array<{
+      collectionTitle: string;
+      collectionYearLabel: string;
+      album: Album;
+    }>
+  >([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -70,11 +95,11 @@ export default function AlbumPage() {
       try {
         const url = `${BASEURL}/albums`;
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) {
-          throw new Error(`Response status: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Response status: ${res.status}`);
+
         const json: AlbumApiResponse = await res.json();
         const list = Array.isArray(json) ? json : json ? [json] : [];
+
         const normalized = list.map<AlbumCollection>((collection) => ({
           _id: collection._id,
           title: collection.title ?? "",
@@ -90,6 +115,7 @@ export default function AlbumPage() {
               }))
             : [],
         }));
+
         setCollections(normalized);
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "Алдаа гарлаа";
@@ -103,10 +129,58 @@ export default function AlbumPage() {
     fetchAlbums();
   }, []);
 
+  // Dialog нээхэд хэрэгтэй flat list-ээ collections өөрчлөгдөхөд үүсгэнэ
+  useEffect(() => {
+    const flat = collections.flatMap((c) => {
+      const yearLabel = c.year ? `${c.year.getFullYear()}` : "";
+      const title = c.title || yearLabel || "Цомог";
+      return c.albums.map((album) => ({
+        collectionTitle: title,
+        collectionYearLabel: yearLabel,
+        album,
+      }));
+    });
+    setFlatAlbums(flat);
+  }, [collections]);
+
   const hasCollections = useMemo(
     () => collections.some((collection) => collection.albums.length > 0),
     [collections]
   );
+
+  const active = flatAlbums[activeIndex];
+
+  const openLightboxByAlbumId = (albumId?: string) => {
+    if (!flatAlbums.length) return;
+    const idx = albumId
+      ? flatAlbums.findIndex((x) => x.album._id === albumId)
+      : -1;
+    setActiveIndex(idx >= 0 ? idx : 0);
+    setOpen(true);
+  };
+
+  const goPrev = () => {
+    setActiveIndex((i) => (i - 1 + flatAlbums.length) % flatAlbums.length);
+  };
+
+  const goNext = () => {
+    setActiveIndex((i) => (i + 1) % flatAlbums.length);
+  };
+
+  // keyboard controls (only when dialog open)
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, flatAlbums.length]);
 
   return (
     <div className="bg-gradient-to-b from-white via-slate-50 to-white">
@@ -196,45 +270,37 @@ export default function AlbumPage() {
                         {collection.description}
                       </p>
                     ) : null}
+                    {collection.year ? (
+                      <p className="text-sm text-slate-600">
+                        {formatAlbumDate(collection.year)}
+                      </p>
+                    ) : null}
                   </div>
-                  <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+                  <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
                     {collection.albums.map((album, albumIdx) => {
                       const key = album._id ?? `${sectionKey}-${albumIdx}`;
+                      const coverUrl = resolveCover(album.cover);
+
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={key}
-                          className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"
+                          onClick={() => openLightboxByAlbumId(album._id)}
+                          className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm text-left"
                         >
                           <div
-                            className="h-44 w-full bg-cover bg-center"
-                            style={{
-                              backgroundImage: `url(${imageUrl + album.cover})`,
-                            }}
+                            className="relative h-56 w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.03]"
+                            style={{ backgroundImage: `url(${coverUrl})` }}
                             aria-label={
                               album.name
                                 ? `${album.name} цомгийн зураг`
                                 : undefined
                             }
-                          />
-                          <div className="flex flex-1 flex-col gap-2 p-6">
-                            {album.name ? (
-                              <h3 className="text-lg font-semibold text-slate-900">
-                                {album.name}
-                              </h3>
-                            ) : null}
-                            {album.location ? (
-                              <p className="text-sm font-medium text-slate-500">
-                                {album.location}
-                              </p>
-                            ) : null}
-                            <p className="text-sm text-slate-600">
-                              {formatAlbumDate(album.date)}
-                            </p>
-                            <div className="mt-auto pt-4 text-sm font-semibold text-primary">
-                              Цомгийн хавтасыг үзэх
-                            </div>
+                          >
+                            <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/15" />
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -243,6 +309,64 @@ export default function AlbumPage() {
             );
           })
         : null}
+
+      {/* --- Lightbox Dialog --- */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="min-w-[70%] p-0 overflow-hidden">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Зураг томоор харах</DialogTitle>
+          </DialogHeader>
+
+          <div className="relative bg-black">
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+              aria-label="Хаах"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Prev/Next */}
+            {flatAlbums.length > 1 ? (
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={goPrev}
+                  className="absolute left-3 top-1/2 z-20 -translate-y-1/2 bg-white/10 text-white hover:bg-white/20"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={goNext}
+                  className="absolute right-3 top-1/2 z-20 -translate-y-1/2 bg-white/10 text-white hover:bg-white/20"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </>
+            ) : null}
+
+            {/* Image */}
+            <div className="flex items-center justify-center">
+              {active ? (
+                // <img> ашиглавал next/image тохиргоо шаардахгүй
+                <img
+                  src={resolveCover(active.album.cover)}
+                  alt={active.album.name || "Album image"}
+                  className="max-h-[75vh] w-auto object-contain"
+                  loading="eager"
+                />
+              ) : (
+                <div className="p-10 text-white/80">Зураг олдсонгүй</div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
