@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { FormEvent, useState } from "react";
 
 import { BASEURL } from "@/lib/authClient";
