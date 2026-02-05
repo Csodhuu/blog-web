@@ -11,8 +11,8 @@ import Logo from "../../public/head-logo.png";
 const navigation = [
   { label: "Нүүр", href: "/" },
   { label: "Бидний тухай", href: "/about" },
-  { label: "Аялал", href: "/travel" },
   { label: "Тэмцээнүүд", href: "/competitions" },
+  { label: "Аялал", href: "/travel" },
   { label: "Camp Training", href: "/camps" },
   { label: "Зургийн цомог", href: "/album" },
   { label: "Холбоо барих", href: "/contact" },

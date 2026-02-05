@@ -21,13 +21,12 @@ type ApiCompetition = {
   title?: string;
   sport?: string;
   date?: string | Date | null;
+  endDate?: string | Date | null;
   location?: string;
+  descriptionType?: string;
   description?: string;
   image?: string;
   type?: ApiCompetitionType;
-
-  // ✅ API дээр линк/файл байдаг бол эндээс авна
-  // (зарим backend дээр pdfUrl, attachmentUrl г.м байж болно)
   link?: string;
   pdfUrl?: string;
   fileUrl?: string;
@@ -39,8 +38,10 @@ export type Competition = {
   title: string;
   sport: string;
   date: Date | null;
+  descriptionType?: string;
   location: string;
   description: string;
+  endDate?: string | Date | null;
   image: string;
   category: "upcomingEvents" | "pastEvents";
   link?: string; // ✅ заримд нь байхгүй байж болно
@@ -59,6 +60,34 @@ const FALLBACK_TITLE = "Тэмцээний нэр тодорхойгүй";
 const FALLBACK_SPORT = "Спорт төрөл тодорхойгүй";
 const FALLBACK_LOCATION = "Байршил тодорхойгүй";
 const FALLBACK_DESCRIPTION = "Тайлбар бэлэн болоход шинэчлэгдэнэ.";
+
+function toListItems(description: string): string[] {
+  try {
+    const parsed = JSON.parse(description);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map((entry) => String(entry).trim())
+        .filter((entry) => entry.length > 0);
+    }
+  } catch (error) {
+    // description string is not valid JSON – fall back to splitting
+  }
+
+  // Primary split on new lines so inline hyphens stay with their sentence.
+  let lines = description.replace(/\r\n/g, "\n").split("\n");
+
+  // If there were no line breaks but bullet characters exist, split on them.
+  if (lines.length === 1 && description.includes("•")) {
+    lines = description.split("•");
+  }
+
+  const BULLET_PREFIX =
+    /^[\s•\u2022\u2023\u25AA\u25CF\u25E6\u2043\u2219\-\*\u00b7·📌➡️👉]+/;
+
+  return lines
+    .map((line) => line.replace(BULLET_PREFIX, "").trim())
+    .filter((line) => line.length > 0);
+}
 
 function parseDate(value: ApiCompetition["date"]): Date | null {
   if (!value) return null;
@@ -83,17 +112,13 @@ function getCompetitionCategory(value: ApiCompetitionType) {
 }
 
 function pickLink(item: ApiCompetition): string | undefined {
-  // ✅ backend чинь линкээ өөр нэрээр өгдөг байж болно гэж тооцоод олон хувилбар шалгав
   const raw =
     item.link ?? item.pdfUrl ?? item.fileUrl ?? item.attachmentUrl ?? undefined;
 
   const trimmed = typeof raw === "string" ? raw.trim() : "";
 
-  // хоосон бол undefined
   if (!trimmed) return undefined;
 
-  // Хэрэв backend relative өгдөг бол BASEURL-тай нийлүүлж болно (сонголт)
-  // ж: "/uploads/file.pdf"
   if (trimmed.startsWith("/")) return `${BASEURL}${trimmed}`;
 
   return trimmed;
@@ -120,9 +145,11 @@ function normalizeCompetitions(data: unknown): Competition[] {
         date: parseDate(item.date),
         location: item.location?.trim() || FALLBACK_LOCATION,
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
+        endDate: parseDate(item.date),
+        descriptionType: item.descriptionType,
         image: item.image?.trim() || DEFAULT_IMAGE,
         category,
-        link, // ✅ эндээс undefined биш үедээ л Link render хийнэ
+        link,
       } as Competition;
     })
     .filter((competition): competition is Competition => competition !== null);
@@ -140,8 +167,6 @@ async function fetchCompetitions(): Promise<CompetitionGroups> {
 
   const json = await response.json();
   const competitions = normalizeCompetitions(json);
-
-  console.log({ competitions });
 
   const upcoming = competitions
     .filter((competition) => competition.category === "upcomingEvents")
@@ -173,15 +198,30 @@ function formatDateRange(date: Date | null) {
   return date.toLocaleDateString("en-CA");
 }
 
-function isSafeNextImageSrc(src: string) {
-  // ✅ remote domains тохиргоо байхгүй үед next/image алдаа өгдөг
-  // local path ("/images/...") бол ok
-  return src.startsWith("/");
+function renderDescription(item: Competition) {
+  const isList = item.descriptionType?.toLowerCase?.() === "list";
+  if (isList) {
+    const lines = toListItems(item.description);
+    if (lines.length > 0) {
+      return (
+        <ul className="max-w-md list-disc space-y-1 pl-5 text-sm md:text-base text-slate-600">
+          {lines.map((line, index) => (
+            <li key={`${item.id ?? item.title}-desc-${index}`}>{line}</li>
+          ))}
+        </ul>
+      );
+    }
+  }
+
+  return (
+    <p className="max-w-md text-sm md:text-base text-slate-600 break-words">
+      {item.description}
+    </p>
+  );
 }
 
 function CompetitionCard({ item }: { item: Competition }) {
-  const canDownload = Boolean(item.link);
-
+  console.log(item);
   return (
     <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
       <div className="grid grid-cols-1 md:grid-cols-2">
@@ -205,9 +245,7 @@ function CompetitionCard({ item }: { item: Competition }) {
               </p>
             </div>
 
-            <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
-              {item.description}
-            </p>
+            {renderDescription(item)}
           </div>
 
           <div className="mt-8">
