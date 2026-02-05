@@ -41,7 +41,7 @@ export type Competition = {
   descriptionType?: string;
   location: string;
   description: string;
-  endDate?: string | Date | null;
+  endDate: Date | null;
   image: string;
   category: "upcomingEvents" | "pastEvents";
   link?: string; // ✅ заримд нь байхгүй байж болно
@@ -237,8 +237,12 @@ function CompetitionCard({ item }: { item: Competition }) {
                 <span className="font-semibold">Ангилал:</span> {item.sport}
               </p>
               <p>
-                <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+                <span className="font-semibold">Тэмцээний эхлэх хугацаа:</span>{" "}
                 {formatDateRange(item.date)}
+              </p>
+              <p>
+                <span className="font-semibold">Тэмцээн дуусах хугацаа:</span>{" "}
+                {formatDateRange(item.endDate)}
               </p>
               <p>
                 <span className="font-semibold">Байршил:</span> {item.location}
@@ -264,7 +268,8 @@ function CompetitionCard({ item }: { item: Competition }) {
             alt={item.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
+            className="object-contain p-4"
+            priority={false}
           />
         </div>
       </div>

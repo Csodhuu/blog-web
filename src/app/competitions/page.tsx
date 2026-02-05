@@ -22,6 +22,7 @@ type ApiCompetition = {
   title?: string;
   sport?: string;
   date?: string | Date | null;
+  endDate?: string | Date | null;
   location?: string;
   descriptionType?: string;
   description?: string;
@@ -63,7 +64,8 @@ function toListItems(description: string): string[] {
     lines = description.split("•");
   }
 
-  const BULLET_PREFIX = /^[\s•\u2022\u2023\u25AA\u25CF\u25E6\u2043\u2219\-\*\u00b7·📌➡️👉]+/;
+  const BULLET_PREFIX =
+    /^[\s•\u2022\u2023\u25AA\u25CF\u25E6\u2043\u2219\-\*\u00b7·📌➡️👉]+/;
 
   return lines
     .map((line) => line.replace(BULLET_PREFIX, "").trim())
@@ -108,6 +110,7 @@ function normalizeCompetitions(data: unknown): Competition[] {
         title: item.title?.trim() || FALLBACK_TITLE,
         sport: item.sport?.trim() || FALLBACK_SPORT,
         date: parseDate(item.date),
+        endDate: parseDate(item.endDate),
         location: item.location?.trim() || FALLBACK_LOCATION,
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
         descriptionType: item.descriptionType,
@@ -199,8 +202,12 @@ function EventCard({ item }: { item: Competition }) {
                 <span className="font-semibold">Ангилал:</span> {item.sport}
               </p>
               <p>
-                <span className="font-semibold">Тэмцээний хугацаа:</span>{" "}
+                <span className="font-semibold">Тэмцээний эхлэх хугацаа:</span>{" "}
                 {formatDateRange(item.date)}
+              </p>
+              <p>
+                <span className="font-semibold">Тэмцээн дуусах хугацаа:</span>{" "}
+                {formatDateRange(item.endDate)}
               </p>
               <p>
                 <span className="font-semibold">Байршил:</span> {item.location}
@@ -228,7 +235,8 @@ function EventCard({ item }: { item: Competition }) {
             alt={item.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
+            className="object-contain p-4"
+            priority={false}
           />
         </div>
       </div>
