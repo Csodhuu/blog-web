@@ -34,14 +34,13 @@ type ApiCompetition = {
   attachmentUrl?: string;
 };
 
-type Competition = {
+export type Competition = {
   id?: string;
   title: string;
   sport: string;
   date: Date | null;
   location: string;
   description: string;
-
   image: string;
   category: "upcomingEvents" | "pastEvents";
   link?: string; // ✅ заримд нь байхгүй байж болно
@@ -141,6 +140,8 @@ async function fetchCompetitions(): Promise<CompetitionGroups> {
 
   const json = await response.json();
   const competitions = normalizeCompetitions(json);
+
+  console.log({ competitions });
 
   const upcoming = competitions
     .filter((competition) => competition.category === "upcomingEvents")

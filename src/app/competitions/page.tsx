@@ -1,3 +1,4 @@
+import { Competition } from "@/components/competitions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BASEURL, imageUrl } from "@/lib/authClient";
@@ -25,18 +26,7 @@ type ApiCompetition = {
   description?: string;
   image?: string;
   type?: ApiCompetitionType;
-};
-
-type Competition = {
-  link: string;
-  id?: string;
-  title: string;
-  sport: string;
-  date: Date | null;
-  location: string;
-  description: string;
-  image: string;
-  category: "upcomingEvents" | "pastEvents";
+  link?: string;
 };
 
 type CompetitionGroups = {
@@ -93,6 +83,7 @@ function normalizeCompetitions(data: unknown): Competition[] {
         location: item.location?.trim() || FALLBACK_LOCATION,
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
         image: item.image?.trim() || DEFAULT_IMAGE,
+        link: item.link,
         category,
       } as Competition;
     })
@@ -170,13 +161,15 @@ function EventCard({ item }: { item: Competition }) {
             </p>
           </div>
 
-          <div className="mt-8">
-            <Link href={item.link || ""} target="_blank">
-              <Button className="gap-2 px-6 py-5 text-sm md:text-base">
-                Танилцуулга татах <Download className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          {item.link && (
+            <div className="mt-8">
+              <Link href={item.link || ""} target="_blank">
+                <Button className="gap-2 px-6 py-5 text-sm md:text-base">
+                  Танилцуулга татах <Download className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* RIGHT IMAGE */}

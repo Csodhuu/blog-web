@@ -17,6 +17,6 @@ export const employees = [
   {
     name: "Одноо",
     position: "Менежер /Малайз/",
-    imgSrc: "/employee/Odnoo.jpg",
+    imgSrc: "/employee/odnoo.jpg",
   },
 ];
