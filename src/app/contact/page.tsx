@@ -123,10 +123,12 @@ export default function ContactPage() {
           <div className="space-y-8">
             {/* Холбоо барих мэдээлэл */}
             <div className="grid gap-6 sm:grid-cols-2">
-              {contactDetails.map((item) => (
+              {contactDetails.map((item, index) => (
                 <div
                   key={item.label}
-                  className="flex items-start gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+                  className={`flex items-start gap-3 ${
+                    index === 0 ? "sm:col-span-2" : ""
+                  } rounded-3xl border border-slate-200 bg-white p-6 shadow-sm`}
                 >
                   <item.icon className="min-h-5 min-w-5 text-primary" />
                   <div>
@@ -175,13 +177,15 @@ export default function ContactPage() {
           {/* Баруун тал — байршлын зураг ба админ холбогдох хүмүүс */}
           <div className="flex flex-col gap-6">
             <div
-              className="h-64 w-full overflow-hidden rounded-3xl border border-slate-200 bg-cover bg-center shadow-sm"
-              style={{
-                backgroundImage:
-                  "url(https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1000&q=80)",
-              }}
+              className="h-64 w-full "
               aria-label="Gateway Sports Travel оффисын байршлын зураг"
-            />
+            >
+              <img
+                src="head-logo.png"
+                alt="Gateway Sports Travel оффисын байршлын зураг"
+                className="h-full w-full object-contain p-2"
+              />
+            </div>
             <form
               onSubmit={handleSubmit}
               className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"

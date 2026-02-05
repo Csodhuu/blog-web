@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { BASEURL, imageUrl } from "@/lib/authClient";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { Download } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 0;
@@ -44,7 +44,7 @@ export type Competition = {
   endDate: Date | null;
   image: string;
   category: "upcomingEvents" | "pastEvents";
-  link?: string; // ✅ заримд нь байхгүй байж болно
+  link?: string;
 };
 
 type CompetitionGroups = {
@@ -52,9 +52,7 @@ type CompetitionGroups = {
   past: Competition[];
 };
 
-// ⚠️ Next/Image remote domain тохиргоо хийгдээгүй бол гаднын URL-ууд алдаа өгнө
-// Тиймээс default-оо local байлгавал найдвартай.
-const DEFAULT_IMAGE = "/images/image1.jpg"; // өөрийн placeholder зураг байвал солино
+const DEFAULT_IMAGE = "/images/image1.jpg";
 
 const FALLBACK_TITLE = "Тэмцээний нэр тодорхойгүй";
 const FALLBACK_SPORT = "Спорт төрөл тодорхойгүй";
@@ -69,14 +67,9 @@ function toListItems(description: string): string[] {
         .map((entry) => String(entry).trim())
         .filter((entry) => entry.length > 0);
     }
-  } catch (error) {
-    // description string is not valid JSON – fall back to splitting
-  }
+  } catch {}
 
-  // Primary split on new lines so inline hyphens stay with their sentence.
   let lines = description.replace(/\r\n/g, "\n").split("\n");
-
-  // If there were no line breaks but bullet characters exist, split on them.
   if (lines.length === 1 && description.includes("•")) {
     lines = description.split("•");
   }
@@ -116,11 +109,8 @@ function pickLink(item: ApiCompetition): string | undefined {
     item.link ?? item.pdfUrl ?? item.fileUrl ?? item.attachmentUrl ?? undefined;
 
   const trimmed = typeof raw === "string" ? raw.trim() : "";
-
   if (!trimmed) return undefined;
-
   if (trimmed.startsWith("/")) return `${BASEURL}${trimmed}`;
-
   return trimmed;
 }
 
@@ -133,7 +123,6 @@ function normalizeCompetitions(data: unknown): Competition[] {
 
       const item = entry as ApiCompetition;
       const category = getCompetitionCategory(item.type);
-
       if (!category) return null;
 
       const link = pickLink(item);
@@ -143,9 +132,9 @@ function normalizeCompetitions(data: unknown): Competition[] {
         title: item.title?.trim() || FALLBACK_TITLE,
         sport: item.sport?.trim() || FALLBACK_SPORT,
         date: parseDate(item.date),
+        endDate: parseDate(item.endDate), // ✅ энд endDate-г зөв parse хийе
         location: item.location?.trim() || FALLBACK_LOCATION,
         description: item.description?.trim() || FALLBACK_DESCRIPTION,
-        endDate: parseDate(item.date),
         descriptionType: item.descriptionType,
         image: item.image?.trim() || DEFAULT_IMAGE,
         category,
@@ -221,7 +210,6 @@ function renderDescription(item: Competition) {
 }
 
 function CompetitionCard({ item }: { item: Competition }) {
-  console.log(item);
   return (
     <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
       <div className="grid grid-cols-1 md:grid-cols-2">
@@ -253,18 +241,24 @@ function CompetitionCard({ item }: { item: Competition }) {
           </div>
 
           <div className="mt-8">
-            <Link href={item.link || ""} target="_blank">
-              <Button className="gap-2 px-6 py-5 text-sm md:text-base">
-                Танилцуулга татах <Download className="h-4 w-4" />
-              </Button>
-            </Link>
+            {item.link ? (
+              <Link href={item.link} target="_blank">
+                <Button className="gap-2 px-6 py-5 text-sm md:text-base">
+                  Танилцуулга татах <Download className="h-4 w-4" />
+                </Button>
+              </Link>
+            ) : null}
           </div>
         </div>
 
         {/* RIGHT IMAGE */}
         <div className="relative h-[260px] md:h-full">
           <Image
-            src={imageUrl + item.image}
+            src={
+              item.image?.startsWith("http")
+                ? item.image
+                : imageUrl + item.image
+            }
             alt={item.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -277,6 +271,10 @@ function CompetitionCard({ item }: { item: Competition }) {
   );
 }
 
+/**
+ * ✅ Preview хувилбар: эхний 2-г харуулна + "Бүгдийг үзэх" товч.
+ * - Хэрвээ яг /competitions page дээр бүрэн жагсаалт харуулах бол тусдаа component болгож болно.
+ */
 export async function Competitions() {
   let items: Competition[] = [];
   let error: string | null = null;
@@ -290,6 +288,8 @@ export async function Competitions() {
         ? err.message
         : "Тэмцээний мэдээллийг авах явцад үл мэдэгдэх алдаа гарлаа.";
   }
+
+  const previewItems = items.slice(0, 2); // ✅ эхний 2-г л үзүүлнэ
 
   return (
     <section className="relative overflow-hidden">
@@ -315,8 +315,8 @@ export async function Competitions() {
         {/* List */}
         {!error ? (
           <div className="space-y-8">
-            {items.length > 0 ? (
-              items.map((item, index) => (
+            {previewItems.length > 0 ? (
+              previewItems.map((item, index) => (
                 <CompetitionCard
                   key={createEventKey(item, index)}
                   item={item}
@@ -327,16 +327,16 @@ export async function Competitions() {
                 Одоогоор тэмцээний мэдээлэл байхгүй байна.
               </p>
             )}
+
+            <div className="pt-6 flex justify-center">
+              <Link href="/competitions">
+                <Button className="gap-2 h-12 w-[200px] text-lg">
+                  Бүгдийг үзэх <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         ) : null}
-
-        {/* Footer */}
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground">
-            Ирээдүйд олон тэмцээнүүд зохиогдох болно. Сонирхолтой мэдээллүүдэд
-            анхаарлаа хандуулаарай !
-          </p>
-        </div>
       </div>
     </section>
   );

@@ -149,42 +149,25 @@ function createCampKey(camp: Camp, index: number) {
 
 function CampCard({ camp }: { camp: Camp }) {
   return (
-    <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-between p-8 md:p-10">
-          <div className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
-              {camp.title}
-            </h2>
+    <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm p-2">
+      <div className="flex h-full flex-col">
+        <div
+          className="h-44 w-full bg-cover bg-center md:h-56 rounded-lg"
+          style={{ backgroundImage: `url(${camp.image})` }}
+          aria-label={`${camp.title} кэмпийн зураг`}
+        />
 
-            <div className="space-y-2 text-base text-slate-700">
-              <p>
-                <span className="font-semibold">Ангилал:</span> {camp.sport}
-              </p>
-              <p>
-                <span className="font-semibold">Кэмп эхлэх хугацаа:</span>{" "}
-                {formatDateRange(camp.date)}
-              </p>
-              <p>
-                <span className="font-semibold">Кэмп дуусах хугацаа:</span>{" "}
-                {formatDateRange(camp.endDate)}
-              </p>
-              <p>
-                <span className="font-semibold">Байршил:</span> {camp.location}
-              </p>
-            </div>
-
-            {renderDescription(camp)}
+        <div className="flex flex-1 flex-col gap-3 p-6">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-primary/80">
+            <span>{camp.sport}</span>
+            <span>{formatDateRange(camp.date)}</span>
           </div>
-        </div>
 
-        <div className="relative h-[260px] md:h-full">
-          <img
-            src={camp.image}
-            alt={camp.title}
-            className="h-full w-full object-contain p-4"
-            loading="lazy"
-          />
+          <h3 className="text-lg font-semibold text-slate-900">{camp.title}</h3>
+          <p className="text-sm font-medium text-slate-500">{camp.location}</p>
+          <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
+            {renderDescription(camp)}
+          </p>
         </div>
       </div>
     </Card>
@@ -302,7 +285,7 @@ export default function CampsPage() {
 
       <section className="bg-white/90">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="space-y-8">
+          <div className="space-y-8 grid gap-4  grid-cols-1 md:grid-cols-2 ">
             {camps.map((camp, index) => (
               <CampCard key={createCampKey(camp, index)} camp={camp} />
             ))}
