@@ -268,13 +268,12 @@ export default async function CompetitionsPage() {
             Тэмцээнүүд
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Хөгжилд чиглэсэн ирэх болон өмнөх арга хэмжээнүүд
+            Хөгжилд чиглэсэн тэмцээн, арга хэмжээнүүд
           </h1>
           <p className="mt-4 max-w-3xl text-sm text-slate-600">
-            Бид танай багийн хөгжлийн үе шатанд тохирсон урилгат тэмцээн, шоу
-            тоглолтуудыг шүүн бүрдүүлдэг. Ирэх арга хэмжээнүүдийг ойрын гарах
-            огноогоор нь эрэмбэлсэн тул урьдчилан оролцох эрхээ баталгаажуулахад
-            хялбар.
+            Бид баг, тамирчдын хөгжлийг дэмжих зорилготой олон улсын болон
+            урилгат тэмцээн, спорт арга хэмжээнүүдийг санал болгож байнаг.
+            Удахгүй болох тэмцээнүүдийн мэдээллийг эндээс авах боломжтой.
           </p>
         </div>
       </section>
@@ -294,10 +293,10 @@ export default async function CompetitionsPage() {
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-                Ирэх тэмцээнүүд
+                Удахгүй болох тэмцээнүүд
               </p>
               <h2 className="text-2xl font-semibold text-slate-900">
-                Дараагийн тэмцээндээ эрхээ баталгаажуулаарай
+                Тэмцээндээ яг одоо бүртгүүлээрэй
               </h2>
             </div>
             {upcomingEvents.length > 0 ? (
@@ -308,7 +307,7 @@ export default async function CompetitionsPage() {
               </div>
             ) : (
               <p className="mt-8 text-sm text-slate-600">
-                Одоогоор ирэх тэмцээний мэдээлэл байхгүй байна.
+                Одоогоор тэмцээний мэдээлэл байхгүй байна.
               </p>
             )}
           </div>
@@ -321,13 +320,6 @@ export default async function CompetitionsPage() {
             <div className="flex flex-col gap-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 Өмнөх тэмцээнүүд
-              </p>
-              <h2 className="text-2xl font-semibold text-slate-900">
-                Өмнөх аяллуудын онцлох агшин
-              </h2>
-              <p className="max-w-3xl text-sm text-slate-600">
-                Өмнөх арга хэмжээнүүдийн тайлан, бичлэгийн дүгнэлт, тусгай фото
-                цомгууд нь тамирчдыг урамшуулж, оролцоог нь хадгалдаг.
               </p>
             </div>
             {pastEvents.length > 0 ? (
