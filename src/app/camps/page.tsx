@@ -165,7 +165,7 @@ function CampCard({ camp }: { camp: Camp }) {
 
           <h3 className="text-lg font-semibold text-slate-900">{camp.title}</h3>
           <p className="text-sm font-medium text-slate-500">{camp.location}</p>
-          <p className="max-w-md text-sm md:text-base text-slate-600 break-all">
+          <p className="max-w-md text-sm md:text-base text-slate-600 break-words">
             {renderDescription(camp)}
           </p>
         </div>
@@ -273,12 +273,13 @@ export default function CampsPage() {
             Кэмп сургалт
           </p>
           <h1 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-            Ур чадвар, сэтгэлзүйг түргэвчилж ахиулах эрчимжүүлсэн хөтөлбөрүүд
+            Ур чадвар, сэтгэлзүйг дараагийн түвшинд хүргэх кэмпүүд
           </h1>
           <p className="mt-4 max-w-3xl text-sm text-slate-600">
-            Gateway кэмп бүр техникийн ур чадвар, соёлын туршлага, сайн сайхныг
-            тэнцвэржүүлж, тамирчдыг урам зоригтой, бэлтгэлтэйгээр гэрт нь
-            буцаахыг зорьдог.
+            Gateway-ийн кэмп бүр мэргэжлийн түвшний техникийн сургалт, соёлын
+            солилцоо, хувь хүний хөгжлийг хослуулсан орчинд явагддаг бөгөөд
+            тамирчдыг илүү бэлтгэлтэй, урам зоригтой, дэлхийн түвшинд сэтгэх
+            чадвартай болгон эх оронд нь буцаадаг.
           </p>
         </div>
       </section>

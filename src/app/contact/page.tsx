@@ -15,7 +15,12 @@ const contactDetails = [
   {
     icon: Phone,
     label: "Утас",
-    value: "(+976) 99008515, (+976) 99121892",
+    value: (
+      <>
+        (+976) 99008515 <br />
+        (+976) 99121892
+      </>
+    ),
   },
   {
     icon: Mail,
